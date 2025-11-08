@@ -1,4 +1,4 @@
-package dev.stevensci;
+package dev.stevensci.jokerpoker;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;

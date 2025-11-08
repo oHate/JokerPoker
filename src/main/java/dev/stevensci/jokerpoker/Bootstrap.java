@@ -1,4 +1,4 @@
-package dev.stevensci;
+package dev.stevensci.jokerpoker;
 
 public class Bootstrap {
 

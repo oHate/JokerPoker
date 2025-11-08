@@ -72,7 +72,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>dev.stevensci.Bootstrap</mainClass>
+                                    <mainClass>dev.stevensci.jokerpoker.Bootstrap</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
