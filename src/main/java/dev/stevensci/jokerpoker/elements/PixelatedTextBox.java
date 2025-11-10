@@ -1,9 +1,7 @@
 package dev.stevensci.jokerpoker.elements;
 
 import dev.stevensci.jokerpoker.Constant;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -12,25 +10,22 @@ public class PixelatedTextBox extends StackPane {
 
     private final PixelatedBox container;
     private final Text text;
-    private final StackPane textWrapper;
+    private final StackPane layout;
 
-    public PixelatedTextBox(Color containerColor, String text) {
-        this(containerColor, Color.WHITE, text);
+    public PixelatedTextBox(String text, Color containerColor) {
+        this(text, Color.WHITE, containerColor);
     }
 
-    public PixelatedTextBox(Color containerColor, Color textColor, String text) {
+    public PixelatedTextBox(String text, Color textColor, Color containerColor) {
         this.container = new PixelatedBox(containerColor);
 
-        this.text = new Text(text);
-        this.text.setFill(textColor);
-        this.text.setFont(Constant.FONT);
-        this.text.setEffect(new DropShadow(0, 2, 2, containerColor.darker()));
+        this.text = Constant.getText(text, textColor, containerColor.darker());
 
-        this.textWrapper = new StackPane(this.text);
-        this.textWrapper.setPadding(new Insets(8));
-        this.textWrapper.setAlignment(Pos.CENTER);
+        this.layout = new StackPane(this.text);
+        this.layout.setPadding(Constant.PADDING_INSETS);
+        this.layout.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(this.container, this.textWrapper);
+        getChildren().addAll(this.container, this.layout);
         setAlignment(Pos.CENTER);
     }
 
@@ -42,8 +37,8 @@ public class PixelatedTextBox extends StackPane {
         return this.text;
     }
 
-    public StackPane getTextWrapper() {
-        return this.textWrapper;
+    public StackPane getLayout() {
+        return this.layout;
     }
 
 }
