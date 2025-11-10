@@ -56,10 +56,10 @@ public class SidebarPane extends Pane {
                 new PixelatedContentBox(type.getPrimaryColor(),
                         new Label(type.getDisplay(), Color.WHITE, type.getPrimaryColor().darker())
                 ),
-                new PixelatedContentBox(Constant.GRAY,
-                        new Label("Score at Least", Color.WHITE, type.getPrimaryColor().darker()),
-                        new PixelatedContentBox(type.getSecondaryColor(),
-                                new Label(NUMBER_FORMAT.format(targetScore), Color.WHITE, type.getSecondaryColor().darker())
+                new PixelatedContentBox(type.getSecondaryColor(),
+                        new Label("Score at Least", Color.WHITE, type.getSecondaryColor().darker()),
+                        new PixelatedContentBox(type.getPrimaryColor(),
+                                new Label(NUMBER_FORMAT.format(targetScore), Color.WHITE, type.getPrimaryColor().darker())
                         )
                 )
         );

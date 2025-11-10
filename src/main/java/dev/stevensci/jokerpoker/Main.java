@@ -13,7 +13,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         BorderPane root = new BorderPane();
 
-        root.setLeft(new SidebarPane(BlindType.SMALL, 1200));
+        root.setLeft(new SidebarPane(BlindType.BIG, 1200));
         root.setCenter(new GamePane());
 
         Scene scene = new Scene(root, 1000, 700);
