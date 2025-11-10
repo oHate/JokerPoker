@@ -1,72 +1,95 @@
 package dev.stevensci.jokerpoker.elements;
 
-import javafx.scene.Group;
-import javafx.scene.layout.Region;
+import dev.stevensci.jokerpoker.Constant;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class PixelatedBox extends Region {
+public class PixelatedBox extends StackPane {
 
     public static final int SHADOW_OFFSET_Y = 4;
     public static final int SHADOW_OFFSET_X = 4;
     public static final int SIZE = 2;
 
     private final Color color;
-    private final boolean shadow;
+    private final Color shadowColor;
 
-    private Group mainBox;
-    private Group shadowBox;
+    private final Rectangle[] rectangles = new Rectangle[4];
+    private final Rectangle[] shadowRectangles = new Rectangle[4];
 
     public PixelatedBox(Color color) {
-        this(color, true);
+        this.color = color;
+        this.shadowColor = color.darker();
+
+        setPadding(Constant.PADDING_INSETS);
+
+        initRectangles(this.rectangles, this.color);
+        initRectangles(this.shadowRectangles, this.shadowColor);
+
+        getChildren().addAll(this.shadowRectangles);
+        getChildren().addAll(this.rectangles);
+
+        for (Rectangle rectangle : this.shadowRectangles) {
+            rectangle.setTranslateX(SHADOW_OFFSET_X);
+            rectangle.setTranslateY(SHADOW_OFFSET_Y);
+        }
     }
 
-    public PixelatedBox(Color color, boolean shadow) {
-        this.color = color;
-        this.shadow = shadow;
+    private void initRectangles(Rectangle[] rectangles, Color fill) {
+        rectangles[0] = createRectangle(0, 4 * SIZE, fill);
+        rectangles[1] = createRectangle(SIZE, 2 * SIZE, fill);
+        rectangles[2] = createRectangle(2 * SIZE, SIZE, fill);
+        rectangles[3] = createRectangle(4 * SIZE, 0, fill);
+    }
 
-        this.mainBox = new Group();
-        this.shadowBox = new Group();
+    private Rectangle createRectangle(double x, double y, Color fill) {
+        Rectangle rectangle = new Rectangle();
+        rectangle.setX(x);
+        rectangle.setY(y);
+        rectangle.setFill(fill);
+        rectangle.setManaged(false);
+        return rectangle;
+    }
 
-        getChildren().addAll(this.shadowBox, this.mainBox);
+    private void updateRectangles(Rectangle[] rectangles, double width, double height) {
+        rectangles[0].setWidth(width);
+        rectangles[0].setHeight(Math.max(0, height - 8 * SIZE));
+
+        rectangles[1].setWidth(Math.max(0, width - 2 * SIZE));
+        rectangles[1].setHeight(Math.max(0, height - 4 * SIZE));
+
+        rectangles[2].setWidth(Math.max(0, width - 4 * SIZE));
+        rectangles[2].setHeight(Math.max(0, height - 2 * SIZE));
+
+        rectangles[3].setWidth(Math.max(0, width - 8 * SIZE));
+        rectangles[3].setHeight(height);
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public Color getShadowColor() {
+        return this.shadowColor;
+    }
+
+    public Rectangle[] getRectangles() {
+        return this.rectangles;
+    }
+
+    public Rectangle[] getShadowRectangles() {
+        return this.shadowRectangles;
     }
 
     @Override
     protected void layoutChildren() {
-        getChildren().clear();
+        super.layoutChildren();
 
-        double dx = this.shadow ? SHADOW_OFFSET_X : 0;
-        double dy = this.shadow ? SHADOW_OFFSET_Y : 0;
+        double width = Math.max(0, getWidth() - SHADOW_OFFSET_X);
+        double height = Math.max(0, getHeight() - SHADOW_OFFSET_Y);
 
-        double contentWidth = Math.max(0, getWidth() - dx);
-        double contentHeight = Math.max(0, getHeight() - dy);
-
-        if (this.shadow) {
-            this.shadowBox = createBoxGroup(this.color.darker(), contentWidth, contentHeight);
-            this.shadowBox.setTranslateX(dx);
-            this.shadowBox.setTranslateY(dy);
-            getChildren().add(this.shadowBox);
-        }
-
-        this.mainBox = createBoxGroup(this.color, contentWidth, contentHeight);
-        getChildren().add(this.mainBox);
-    }
-
-    private Group createBoxGroup(Color color, double width, double height) {
-        return new Group(
-                new Rectangle(0, 4 * SIZE, width, Math.max(0, height - 8 * SIZE)) {{
-                    setFill(color);
-                }},
-                new Rectangle(SIZE, 2 * SIZE, Math.max(0, width - 2 * SIZE), Math.max(0, height - 4 * SIZE)) {{
-                    setFill(color);
-                }},
-                new Rectangle(2 * SIZE, SIZE, Math.max(0, width - 4 * SIZE), Math.max(0, height - 2 * SIZE)) {{
-                    setFill(color);
-                }},
-                new Rectangle(4 * SIZE, 0, Math.max(0, width - 8 * SIZE), height) {{
-                    setFill(color);
-                }}
-        );
+        updateRectangles(this.shadowRectangles, width, height);
+        updateRectangles(this.rectangles, width, height);
     }
 
 }

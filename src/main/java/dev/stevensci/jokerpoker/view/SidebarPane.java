@@ -2,9 +2,9 @@ package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.BlindType;
 import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedContentBox;
-import dev.stevensci.jokerpoker.elements.PixelatedTextBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,16 +18,16 @@ public class SidebarPane extends Pane {
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
-    private PixelatedTextBox scoreBox;
+    private PixelatedContentBox scoreBox;
     private Text handTypeText;
-    private PixelatedTextBox chipsBox;
-    private PixelatedTextBox multBox;
+    private PixelatedContentBox chipsBox;
+    private PixelatedContentBox multBox;
 
-    private PixelatedTextBox handsBox;
-    private PixelatedTextBox discardsBox;
-    private PixelatedTextBox moneyBox;
-    private PixelatedTextBox anteBox;
-    private PixelatedTextBox roundBox;
+    private PixelatedContentBox handsBox;
+    private PixelatedContentBox discardsBox;
+    private PixelatedContentBox moneyBox;
+    private PixelatedContentBox anteBox;
+    private PixelatedContentBox roundBox;
 
     public SidebarPane(BlindType type, int targetScore) {
         VBox root = new VBox(Constant.SPACING);
@@ -37,7 +37,7 @@ public class SidebarPane extends Pane {
         root.setBorder(new Border(new BorderStroke(
                 Color.TRANSPARENT, type.getSecondaryColor(), Color.TRANSPARENT, type.getSecondaryColor(),
                 BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY, new BorderWidths(4), Insets.EMPTY
+                CornerRadii.EMPTY, new BorderWidths(Constant.SPACING), Insets.EMPTY
         )));
         root.setBackground(Background.fill(Constant.GRAY));
 
@@ -52,43 +52,61 @@ public class SidebarPane extends Pane {
     }
 
     public Node getHeaderNode(BlindType type, int targetScore) {
-        PixelatedContentBox statisticBox = new PixelatedContentBox(
-                "Score at Least",
-                type.getSecondaryColor(),
-                new PixelatedTextBox(NUMBER_FORMAT.format(targetScore), type.getPrimaryColor())
+        VBox layout = new VBox(Constant.SPACING,
+                new PixelatedContentBox(type.getPrimaryColor(),
+                        new Label(type.getDisplay(), Color.WHITE, type.getPrimaryColor().darker())
+                ),
+                new PixelatedContentBox(Constant.GRAY,
+                        new Label("Score at Least", Color.WHITE, type.getPrimaryColor().darker()),
+                        new PixelatedContentBox(type.getSecondaryColor(),
+                                new Label(NUMBER_FORMAT.format(targetScore), Color.WHITE, type.getSecondaryColor().darker())
+                        )
+                )
         );
 
-        PixelatedTextBox blindBox = new PixelatedTextBox(type.getDisplay(), type.getPrimaryColor());
-
-        VBox layout = new VBox(Constant.SPACING, blindBox, statisticBox);
         layout.setPadding(Constant.PADDING_INSETS);
 
         return new StackPane(new PixelatedBox(Constant.DARK_GRAY), layout);
     }
 
     public Node getFooterNode() {
-        this.handsBox = new PixelatedTextBox("0", Constant.LIGHT_BLUE, Constant.GRAY);
-        this.discardsBox = new PixelatedTextBox("0", Constant.LIGHT_RED, Constant.GRAY);
-        this.moneyBox = new PixelatedTextBox("$0", Constant.LIGHT_YELLOW, Constant.GRAY);
-        this.anteBox = new PixelatedTextBox("1/8", Constant.LIGHT_ORANGE, Constant.GRAY);
-        this.roundBox = new PixelatedTextBox("1", Constant.LIGHT_ORANGE, Constant.GRAY);
+        this.handsBox = new PixelatedContentBox(Constant.GRAY, new Label("0", Constant.LIGHT_BLUE, Constant.GRAY.darker()));
+        this.discardsBox = new PixelatedContentBox(Constant.GRAY, new Label("0", Constant.LIGHT_RED, Constant.GRAY.darker()));
+        this.moneyBox = new PixelatedContentBox(Constant.GRAY, new Label("$0", Constant.LIGHT_YELLOW, Constant.GRAY.darker()));
+        this.anteBox = new PixelatedContentBox(Constant.GRAY, new Label("1/8", Constant.LIGHT_ORANGE, Constant.GRAY.darker()));
+        this.roundBox = new PixelatedContentBox(Constant.GRAY, new Label("1", Constant.LIGHT_ORANGE, Constant.GRAY.darker()));
 
         GridPane layout = new GridPane(Constant.SPACING, Constant.SPACING);
         layout.getColumnConstraints().addAll(Constant.COL_50, Constant.COL_50);
 
         layout.addRow(0,
-                new PixelatedContentBox("Hands", Constant.DARK_GRAY, this.handsBox),
-                new PixelatedContentBox("Discards", Constant.DARK_GRAY, this.discardsBox)
+                new PixelatedContentBox(Constant.DARK_GRAY,
+                        new Label("Hands", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        this.handsBox
+                ),
+                new PixelatedContentBox(Constant.DARK_GRAY,
+                        new Label("Discards", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        this.discardsBox
+                )
         );
 
         layout.add(
-                new PixelatedContentBox("Money", Constant.DARK_GRAY, this.moneyBox),
+                new PixelatedContentBox(Constant.DARK_GRAY,
+                        new Label("Money", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        this.moneyBox
+                ),
                 0, 1, 2, 1
         );
 
         layout.addRow(2,
-                new PixelatedContentBox("Ante", Constant.DARK_GRAY, this.anteBox),
-                new PixelatedContentBox("Round", Constant.DARK_GRAY, this.roundBox)
+                new PixelatedContentBox(Constant.DARK_GRAY,
+                        new Label("Ante", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        this.anteBox
+                ),
+                new PixelatedContentBox(Constant.DARK_GRAY,
+                        new Label("Round", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        this.roundBox
+                )
         );
 
         return layout;
@@ -98,71 +116,44 @@ public class SidebarPane extends Pane {
         GridPane layout = new GridPane(Constant.SPACING, 0);
         layout.getColumnConstraints().addAll(Constant.COL_45, Constant.COL_10, Constant.COL_45);
 
-        this.chipsBox = new PixelatedTextBox("0", Constant.BLUE);
+        this.chipsBox = new PixelatedContentBox(Constant.BLUE,
+                new Label("0", Color.WHITE, Constant.BLUE.darker())
+        );
         this.chipsBox.getLayout().setAlignment(Pos.CENTER_RIGHT);
 
-        this.multBox = new PixelatedTextBox("0", Constant.RED);
+        this.multBox = new PixelatedContentBox(Constant.RED,
+                new Label("0", Color.WHITE, Constant.RED.darker())
+        );
         this.multBox.getLayout().setAlignment(Pos.CENTER_LEFT);
 
         layout.addRow(0,
                 this.chipsBox,
-                Constant.getText("X", Color.WHITE, Constant.DARK_GRAY.darker()),
+                new Label("X", Color.WHITE, Constant.DARK_GRAY.darker()),
                 this.multBox
         );
 
-        PixelatedContentBox content = new PixelatedContentBox("None", Constant.DARK_GRAY, layout);
-        this.handTypeText = content.getText();
+        this.handTypeText = new Label("None", Color.WHITE, Constant.DARK_GRAY.darker());
 
-        return content;
+        return new PixelatedContentBox(Constant.DARK_GRAY,
+                this.handTypeText,
+                layout
+        );
     }
 
     private StackPane getRoundScoreNode() {
         PixelatedBox container = new PixelatedBox(Constant.DARK_GRAY);
 
-        this.scoreBox = new PixelatedTextBox("0", Constant.GRAY);
+        this.scoreBox = new PixelatedContentBox(Constant.GRAY,
+                new Label("0", Color.WHITE, Constant.GRAY.darker())
+        );
+
         HBox.setHgrow(this.scoreBox, Priority.ALWAYS);
 
-        HBox layout = new HBox(Constant.SPACING, Constant.getText("Score", Color.WHITE, Constant.DARK_GRAY.darker()), this.scoreBox);
+        HBox layout = new HBox(Constant.SPACING, new Label("Score", Color.WHITE, Constant.DARK_GRAY.darker()), this.scoreBox);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(Constant.PADDING_INSETS);
 
         return new StackPane(container, layout);
-    }
-
-    public PixelatedTextBox getScoreBox() {
-        return scoreBox;
-    }
-
-    public Text getHandTypeText() {
-        return handTypeText;
-    }
-
-    public PixelatedTextBox getChipsBox() {
-        return chipsBox;
-    }
-
-    public PixelatedTextBox getMultBox() {
-        return multBox;
-    }
-
-    public PixelatedTextBox getHandsBox() {
-        return handsBox;
-    }
-
-    public PixelatedTextBox getDiscardsBox() {
-        return discardsBox;
-    }
-
-    public PixelatedTextBox getMoneyBox() {
-        return moneyBox;
-    }
-
-    public PixelatedTextBox getAnteBox() {
-        return anteBox;
-    }
-
-    public PixelatedTextBox getRoundBox() {
-        return roundBox;
     }
 
 }

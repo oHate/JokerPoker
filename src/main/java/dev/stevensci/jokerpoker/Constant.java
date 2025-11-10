@@ -17,7 +17,6 @@ public class Constant {
     public static final ColumnConstraints COL_45 = createColumnConstraints(45);
     public static final ColumnConstraints COL_10 = createColumnConstraints(10);
 
-    public static final int TEXT_SHADOW_OFFSET = 2;
     public static final int SPACING = 4;
     public static final int PADDING = 8;
 
@@ -46,14 +45,6 @@ public class Constant {
 
     public static final Color LIGHT_PURPLE = Color.web("#8E51FF");
     public static final Color PURPLE = Color.web("#7F22FE");
-
-    public static Text getText(String value, Color color, Color dropShadowColor) {
-        Text text = new Text(value);
-        text.setFont(FONT);
-        text.setFill(color);
-        text.setEffect(new DropShadow(0, TEXT_SHADOW_OFFSET, TEXT_SHADOW_OFFSET, dropShadowColor));
-        return text;
-    }
 
     public static ColumnConstraints createColumnConstraints(double widthPercent) {
         ColumnConstraints constraints = new ColumnConstraints();
