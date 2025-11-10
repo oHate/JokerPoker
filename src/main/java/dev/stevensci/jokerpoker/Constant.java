@@ -16,6 +16,8 @@ public class Constant {
     public static final ColumnConstraints COL_50 = createColumnConstraints(50);
     public static final ColumnConstraints COL_45 = createColumnConstraints(45);
     public static final ColumnConstraints COL_10 = createColumnConstraints(10);
+    public static final ColumnConstraints COL_70 = createColumnConstraints(70);
+    public static final ColumnConstraints COL_30 = createColumnConstraints(30);
 
     public static final int SPACING = 4;
     public static final int PADDING = 8;

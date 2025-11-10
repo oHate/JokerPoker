@@ -5,6 +5,7 @@ import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;
 import dev.stevensci.jokerpoker.elements.PixelatedContentBox;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -27,6 +28,7 @@ public class GamePane extends BorderPane {
 
         setAlignment(bottomNode, Pos.CENTER);
         setBottom(bottomNode);
+        setTop(getHeaderNode());
     }
 
     public Node getBottomNode() {
@@ -78,6 +80,23 @@ public class GamePane extends BorderPane {
         container.setMaxWidth(Region.USE_PREF_SIZE);
 
         return container;
+    }
+
+    public Node getHeaderNode(){
+        GridPane layout = new GridPane(Constant.SPACING, 0);
+
+        layout.getColumnConstraints().addAll(Constant.COL_70, Constant.COL_30);
+
+        layout.addRow(0, new PixelatedBox(Constant.GRAY), new PixelatedBox(Constant.GRAY));
+        Label jokerCount = new Label("0/0", Color.WHITE, Constant.GRAY.darker());
+        Label consumableCount = new Label("0/0", Color.WHITE, Constant.GRAY.darker());
+        layout.addRow(1, jokerCount, consumableCount);
+
+        GridPane.setHalignment(jokerCount, HPos.LEFT);
+        GridPane.setHalignment(consumableCount, HPos.RIGHT);
+
+
+        return layout;
     }
 
 }
