@@ -14,6 +14,12 @@ public class JokerPokerGame {
     private final List<PlayingCard> deck = new ArrayList<>(52);
     private final List<JokerCard> jokers = new ArrayList<>();
 
+    private int baseHands = 4;
+    private int baseDiscards = 3;
+    private int baseHandSize = 8;
+    private int round = 1;
+    private int ante = 1;
+
     private Blind blind;
 
     public JokerPokerGame() {

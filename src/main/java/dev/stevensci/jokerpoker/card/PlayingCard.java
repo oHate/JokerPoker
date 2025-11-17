@@ -1,7 +1,9 @@
 package dev.stevensci.jokerpoker.card;
 
+import dev.stevensci.jokerpoker.Constant;
 import dev.stevensci.jokerpoker.card.meta.*;
 import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 
 public class PlayingCard extends Card implements Comparable<PlayingCard> {
 
@@ -18,6 +20,10 @@ public class PlayingCard extends Card implements Comparable<PlayingCard> {
 
         this.rank = rank;
         this.suit = suit;
+    }
+
+    public ImageView getView() {
+        return Constant.CARD_SPRITESHEET.getView(this.rank.ordinal(), this.suit.ordinal());
     }
 
     public CardRank getRank() {

@@ -3,15 +3,18 @@ package dev.stevensci.jokerpoker;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.text.NumberFormat;
+
 public class Constant {
 
-    public static final Font FONT;
+    public static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static final ColumnConstraints COL_50 = createColumnConstraints(50);
     public static final ColumnConstraints COL_45 = createColumnConstraints(45);
@@ -21,10 +24,30 @@ public class Constant {
 
     public static final int SPACING = 4;
     public static final int PADDING = 8;
-
     public static final Insets PADDING_INSETS = new Insets(PADDING);
 
+    public static final Image BACKGROUND_IMAGE;
+    public static final SpriteSheet CARD_SPRITESHEET;
+    public static final SpriteSheet JOKERS_SPRITESHEET;
+    public static final Font FONT;
+
     static {
+        CARD_SPRITESHEET = new SpriteSheet(new Image(
+                Constant.class.getResourceAsStream("/images/deck.png"),
+                0, 0,
+                true,
+                false
+        ),96, 128);
+
+        JOKERS_SPRITESHEET = new SpriteSheet(new Image(
+                Constant.class.getResourceAsStream("/images/jokers.png"),
+                0, 0,
+                true,
+                false
+        ),96, 128);
+
+        BACKGROUND_IMAGE = new Image(Constant.class.getResourceAsStream("/images/pokertable.jpg"));
+
         FONT = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 32);
     }
 

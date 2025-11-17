@@ -7,24 +7,18 @@ import javafx.scene.image.ImageView;
 public class SpriteSheet {
 
     private final Image spriteSheet;
-    private final int width;
-    private final int height;
+    private final int spriteWidth;
+    private final int spriteHeight;
 
-    public SpriteSheet(String texturePath, int width, int height) {
-        this.spriteSheet = new Image(
-                getClass().getResourceAsStream(texturePath),
-                0, 0,
-                true,
-                false
-        );
-
-        this.width = width;
-        this.height = height;
+    public SpriteSheet(Image texture, int spriteWidth, int spriteHeight) {
+        this.spriteSheet = texture;
+        this.spriteWidth = spriteWidth;
+        this.spriteHeight = spriteHeight;
     }
 
     public ImageView getView(int x, int y) {
         ImageView view = new ImageView(this.spriteSheet);
-        view.setViewport(new Rectangle2D(x * this.width, y * this.height, this.width, this.height));
+        view.setViewport(new Rectangle2D(x * this.spriteWidth, y * this.spriteHeight, this.spriteWidth, this.spriteHeight));
         view.setSmooth(false);
         return view;
     }

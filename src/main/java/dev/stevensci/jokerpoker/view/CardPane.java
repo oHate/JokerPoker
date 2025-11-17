@@ -1,6 +1,7 @@
 package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;
@@ -8,27 +9,59 @@ import dev.stevensci.jokerpoker.elements.PixelatedContentBox;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-public class GamePane extends BorderPane {
+import java.util.List;
+
+public class CardPane extends BorderPane {
+
+    private final Pane overlayPane;
+    private final List<PlayingCard> cards;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
     private PixelatedButton sortRankButton;
     private PixelatedButton sortSuitButton;
 
-    public GamePane() {
+    public CardPane(Pane overlayPane, List<PlayingCard> cards) {
+        this.overlayPane = overlayPane;
+        this.cards = cards;
+
         setPadding(Constant.PADDING_INSETS);
 
         Node bottomNode = getBottomNode();
-
         setAlignment(bottomNode, Pos.CENTER);
         setBottom(bottomNode);
+
+        Node centerNode = getCenterNode();
+
+        setAlignment(centerNode, Pos.CENTER);
+        setCenter(centerNode);
+
         setTop(getHeaderNode());
+
+        BackgroundImage background = new BackgroundImage(Constant.BACKGROUND_IMAGE,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+        );
+
+        setBackground(new Background(background));
+    }
+
+    public Node getCenterNode() {
+        HBox centerNode = new HBox(Constant.SPACING);
+        centerNode.setFillHeight(false);
+
+        for (PlayingCard card : cards) {
+            DraggableView draggableView = new DraggableView(centerNode, this.overlayPane);
+            draggableView.getChildren().add(card.getView());
+        }
+
+        centerNode.setAlignment(Pos.CENTER);
+
+        return centerNode;
     }
 
     public Node getBottomNode() {
@@ -82,19 +115,28 @@ public class GamePane extends BorderPane {
         return container;
     }
 
-    public Node getHeaderNode(){
-        GridPane layout = new GridPane(Constant.SPACING, 0);
+    public Node getHeaderNode() {
+        GridPane layout = new GridPane(Constant.SPACING, Constant.SPACING);
 
         layout.getColumnConstraints().addAll(Constant.COL_70, Constant.COL_30);
 
-        layout.addRow(0, new PixelatedBox(Constant.GRAY), new PixelatedBox(Constant.GRAY));
-        Label jokerCount = new Label("0/0", Color.WHITE, Constant.GRAY.darker());
-        Label consumableCount = new Label("0/0", Color.WHITE, Constant.GRAY.darker());
+        HBox jokerBox = new HBox(Constant.SPACING);
+        jokerBox.setAlignment(Pos.CENTER);
+
+        DraggableView j1 = new DraggableView(jokerBox, overlayPane);
+        j1.getChildren().add(Constant.JOKERS_SPRITESHEET.getView(0, 0));
+
+        DraggableView j2 = new DraggableView(jokerBox, overlayPane);
+        j2.getChildren().add(Constant.JOKERS_SPRITESHEET.getView(1, 0));
+
+        layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox), new PixelatedBox(Constant.GRAY));
+
+        Label jokerCount = new Label("2/5", Color.WHITE, Constant.GRAY.darker());
+        Label consumableCount = new Label("0/2", Color.WHITE, Constant.GRAY.darker());
         layout.addRow(1, jokerCount, consumableCount);
 
         GridPane.setHalignment(jokerCount, HPos.LEFT);
         GridPane.setHalignment(consumableCount, HPos.RIGHT);
-
 
         return layout;
     }
