@@ -55,8 +55,7 @@ public class CardPane extends BorderPane {
         centerNode.setFillHeight(false);
 
         for (PlayingCard card : cards) {
-            DraggableView draggableView = new DraggableView(centerNode, this.overlayPane);
-            draggableView.getChildren().add(card.getView());
+            centerNode.getChildren().add(new CardView(card));
         }
 
         centerNode.setAlignment(Pos.CENTER);
@@ -122,12 +121,6 @@ public class CardPane extends BorderPane {
 
         HBox jokerBox = new HBox(Constant.SPACING);
         jokerBox.setAlignment(Pos.CENTER);
-
-        DraggableView j1 = new DraggableView(jokerBox, overlayPane);
-        j1.getChildren().add(Constant.JOKERS_SPRITESHEET.getView(0, 0));
-
-        DraggableView j2 = new DraggableView(jokerBox, overlayPane);
-        j2.getChildren().add(Constant.JOKERS_SPRITESHEET.getView(1, 0));
 
         layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox), new PixelatedBox(Constant.GRAY));
 

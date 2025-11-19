@@ -30,5 +30,7 @@ public class GameView extends StackPane {
         getChildren().addAll(layout, this.overlayPane);
     }
 
-
+    public Pane getOverlayPane() {
+        return overlayPane;
+    }
 }
