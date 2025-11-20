@@ -16,17 +16,15 @@ import java.util.List;
 
 public class CardPane extends BorderPane {
 
-    private final Pane overlayPane;
-    private final List<PlayingCard> cards;
+    private final List<PlayingCard> hand;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
     private PixelatedButton sortRankButton;
     private PixelatedButton sortSuitButton;
 
-    public CardPane(Pane overlayPane, List<PlayingCard> cards) {
-        this.overlayPane = overlayPane;
-        this.cards = cards;
+    public CardPane(List<PlayingCard> hand) {
+        this.hand = hand;
 
         setPadding(Constant.PADDING_INSETS);
 
@@ -54,7 +52,7 @@ public class CardPane extends BorderPane {
         HBox centerNode = new HBox(Constant.SPACING);
         centerNode.setFillHeight(false);
 
-        for (PlayingCard card : cards) {
+        for (PlayingCard card : this.hand) {
             centerNode.getChildren().add(new CardView(card));
         }
 

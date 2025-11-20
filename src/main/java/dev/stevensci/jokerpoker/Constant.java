@@ -71,6 +71,40 @@ public class Constant {
     public static final Color LIGHT_PURPLE = Color.web("#8E51FF");
     public static final Color PURPLE = Color.web("#7F22FE");
 
+    public static final long[] SCORE_ARRAY = {
+            100,
+            300,
+            800,
+            2_000,
+            5_000,
+            11_000,
+            20_000,
+            35_000,
+            50_000,
+            110_000,
+            560_000,
+            7_200_000,
+            300_000_000,
+            47_000_000_000L,
+            (long) 2.9e13,
+            (long) 7.7e16,
+            (long) 8.6e20,
+            (long) 4.2e25,
+            (long) 9.2e30,
+            (long) 9.2e36,
+            (long) 4.3e43,
+            (long) 9.7e50,
+            (long) 1.0e59,
+            (long) 5.8e67,
+            (long) 1.6e77,
+            (long) 2.4e87,
+            (long) 1.9e98,
+            (long) 8.4e109,
+            (long) 2.0e122,
+            (long) 2.7e135,
+            (long) 2.1e149
+    };
+
     public static ColumnConstraints createColumnConstraints(double widthPercent) {
         ColumnConstraints constraints = new ColumnConstraints();
         constraints.setPercentWidth(widthPercent);

@@ -2,9 +2,11 @@ package dev.stevensci.jokerpoker;
 
 import dev.stevensci.jokerpoker.view.Draggable;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -19,18 +21,26 @@ import java.util.List;
 public class DragManager {
 
     private static final double DRAG_THRESHOLD = 10;
+
     private final Pane overlay;
+
     private final EventHandler<MouseEvent> mousePressedHandler;
     private final EventHandler<MouseEvent> mouseDraggedHandler;
     private final EventHandler<MouseEvent> mouseReleasedHandler;
+
     private Scene scene;
-    private Region placeholder;
+
     private Node node;
     private Pane parent;
+    private Region placeholder;
+
     private double offsetX;
     private double offsetY;
+
     private double pressX;
     private double pressY;
+
+    private boolean locked;
     private boolean dragging;
     private boolean dragStarted;
 
@@ -59,9 +69,9 @@ public class DragManager {
         this.scene = null;
     }
 
-
     private void mousePressedHandler(MouseEvent event) {
         if (event.getButton() != MouseButton.PRIMARY) return;
+        if (this.locked) return;
 
         Node draggableNode = findDraggableAncestor(event.getPickResult().getIntersectedNode());
         if (draggableNode == null || !(draggableNode.getParent() instanceof Pane parent)) {
@@ -78,12 +88,12 @@ public class DragManager {
 
         this.offsetX = this.pressX - sceneBounds.getMinX();
         this.offsetY = this.pressY - sceneBounds.getMinY();
-
-        this.dragging = false;
-        this.dragStarted = false;
     }
 
     public void handleMouseDragged(MouseEvent event) {
+        if (this.locked) return;
+        if (this.node == null) return;
+
         double deltaX = event.getSceneX() - this.pressX;
         double deltaY = event.getSceneY() - this.pressY;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -96,12 +106,13 @@ public class DragManager {
             this.dragStarted = true;
             this.dragging = true;
 
-            Bounds sceneBounds = this.node.localToScene(this.node.getBoundsInLocal());
+            Bounds nodeBounds = this.node.localToScene(this.node.getBoundsInLocal());
 
-            this.placeholder = createPlaceholder(sceneBounds);
+            this.placeholder = createPlaceholder(nodeBounds);
 
-            int index = this.parent.getChildren().indexOf(this.node);
-            this.parent.getChildren().set(index, this.placeholder);
+            this.parent.getChildren().set(this.parent.getChildren().indexOf(this.node), this.placeholder);
+            this.parent.layout();
+
             this.overlay.getChildren().add(this.node);
 
             ScaleTransition scale = new ScaleTransition(Duration.millis(200), this.node);
@@ -114,45 +125,6 @@ public class DragManager {
             updateDragPosition(event);
         }
     }
-
-
-//    private void handleMouseDragged(MouseEvent event) {
-//        if (this.node != null) {
-//            updateDragPosition(event);
-//            return;
-//        }
-//
-//        Node draggableNode = findDraggableAncestor(event.getPickResult().getIntersectedNode());
-//        if (draggableNode == null || !(draggableNode.getParent() instanceof Pane parent)) {
-//            return;
-//        }
-//
-//        this.node = draggableNode;
-//        this.parent = parent;
-//
-//        Bounds sceneBounds = this.node.localToScene(this.node.getBoundsInLocal());
-//
-//        this.offsetX = event.getSceneX() - sceneBounds.getMinX();
-//        this.offsetY = event.getSceneY() - sceneBounds.getMinY();
-//
-//        this.placeholder = createPlaceholder(sceneBounds);
-//
-//        int index = this.parent.getChildren().indexOf(this.node);
-//        this.parent.getChildren().set(index, this.placeholder);
-//
-//        Point2D overlayPos = this.overlay.sceneToLocal(
-//                sceneBounds.getMinX(),
-//                sceneBounds.getMinY()
-//        );
-//
-//        this.overlay.getChildren().add(this.node);
-//        this.node.relocate(overlayPos.getX(), overlayPos.getY());
-//
-//        ScaleTransition scale = new ScaleTransition(Duration.millis(200), this.node);
-//        scale.setToX(1.2);
-//        scale.setToY(1.2);
-//        scale.play();
-//    }
 
     private Node findDraggableAncestor(Node start) {
         Node current = start;
@@ -174,8 +146,10 @@ public class DragManager {
     }
 
     private void handleMouseReleased(MouseEvent event) {
-        if (this.node == null) return;
-        if (this.placeholder == null) return;
+        if (this.locked) return;
+        if (!this.dragging) return;
+
+        this.locked = true;
 
         Bounds bounds = this.placeholder.localToScene(this.placeholder.getBoundsInLocal());
 
@@ -201,9 +175,14 @@ public class DragManager {
             int targetIndex = this.parent.getChildren().indexOf(this.placeholder);
             this.parent.getChildren().set(targetIndex, this.node);
 
-            this.placeholder = null;
             this.node = null;
             this.parent = null;
+            this.placeholder = null;
+
+            this.dragging = false;
+            this.dragStarted = false;
+
+            this.locked = false;
         });
 
         anim.play();
@@ -211,7 +190,8 @@ public class DragManager {
     }
 
     private void updatePlaceholderPosition() {
-        if (this.placeholder == null) return;
+        if (this.locked) return;
+        if (this.placeholder == null || this.parent == null) return;
         if (this.parent.getChildren().size() <= 1) return;
 
         Bounds sceneBounds = this.node.localToScene(this.node.getBoundsInLocal());
@@ -245,9 +225,10 @@ public class DragManager {
         this.parent.getChildren().add(insertIndex, this.placeholder);
     }
 
-    private Region createPlaceholder(Bounds sceneBounds) {
+    private Region createPlaceholder(Bounds bounds) {
         Region placeholder = new Region();
-        placeholder.setPrefSize(sceneBounds.getWidth(), sceneBounds.getHeight());
+
+        placeholder.setPrefSize(bounds.getWidth(), bounds.getHeight());
         placeholder.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         placeholder.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 

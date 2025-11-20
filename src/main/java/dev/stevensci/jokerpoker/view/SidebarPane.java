@@ -12,11 +12,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import java.text.NumberFormat;
-
 public class SidebarPane extends Pane {
 
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    private final BlindType type;
+    private final long targetScore;
 
     private Text scoreLabel;
     private Text handTypeText;
@@ -28,7 +27,10 @@ public class SidebarPane extends Pane {
     private Text anteLabel;
     private Text roundLabel;
 
-    public SidebarPane(BlindType type, int targetScore) {
+    public SidebarPane(BlindType type, long targetScore) {
+        this.type = type;
+        this.targetScore = targetScore;
+
         VBox root = new VBox(Constant.SPACING);
         root.setPadding(Constant.PADDING_INSETS);
 
@@ -41,7 +43,7 @@ public class SidebarPane extends Pane {
         root.setBackground(Background.fill(Constant.GRAY));
 
         root.getChildren().addAll(
-                getHeaderNode(type, targetScore),
+                getHeaderNode(),
                 getRoundScoreNode(),
                 getHandTypeNode(),
                 getFooterNode()
@@ -50,15 +52,15 @@ public class SidebarPane extends Pane {
         getChildren().add(root);
     }
 
-    public Node getHeaderNode(BlindType type, int targetScore) {
+    public Node getHeaderNode() {
         VBox layout = new VBox(Constant.SPACING,
-                new PixelatedContentBox(type.getPrimaryColor(),
-                        new Label(type.getDisplay(), Color.WHITE, type.getPrimaryColor().darker())
+                new PixelatedContentBox(this.type.getPrimaryColor(),
+                        new Label(this.type.getDisplay(), Color.WHITE, this.type.getPrimaryColor().darker())
                 ),
                 new PixelatedContentBox(type.getSecondaryColor(),
-                        new Label("Score at Least", Color.WHITE, type.getSecondaryColor().darker()),
-                        new PixelatedContentBox(type.getPrimaryColor(),
-                                new Label(NUMBER_FORMAT.format(targetScore), Color.WHITE, type.getPrimaryColor().darker())
+                        new Label("Score at Least", Color.WHITE, this.type.getSecondaryColor().darker()),
+                        new PixelatedContentBox(this.type.getPrimaryColor(),
+                                new Label(Constant.NUMBER_FORMAT.format(this.targetScore), Color.WHITE, this.type.getPrimaryColor().darker())
                         )
                 )
         );
