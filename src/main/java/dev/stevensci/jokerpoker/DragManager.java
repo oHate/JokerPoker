@@ -140,7 +140,11 @@ public class DragManager {
 
     private void handleMouseReleased(MouseEvent event) {
         if (this.locked) return;
-        if (!this.dragging) return;
+
+        if (!this.dragging) {
+            if (this.node != null) reset();
+            return;
+        }
 
         this.locked = true;
 
@@ -164,18 +168,22 @@ public class DragManager {
             int targetIndex = this.parent.getChildren().indexOf(this.placeholder);
             this.parent.getChildren().set(targetIndex, this.node);
 
-            this.node = null;
-            this.parent = null;
-            this.placeholder = null;
-
-            this.dragging = false;
-            this.dragStarted = false;
-
-            this.locked = false;
+            reset();
         });
 
         anim.play();
         event.consume();
+    }
+
+    private void reset() {
+        this.node = null;
+        this.parent = null;
+        this.placeholder = null;
+
+        this.dragging = false;
+        this.dragStarted = false;
+
+        this.locked = false;
     }
 
     private void updatePlaceholderPosition() {

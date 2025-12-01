@@ -65,7 +65,7 @@ public class GameView extends StackPane {
     }
 
     public void updateDiscards(int discards) {
-        this.sidebarPane.getHandsLabel().setText(String.valueOf(discards));
+        this.sidebarPane.getDiscardsLabel().setText(String.valueOf(discards));
     }
 
     public void updateMoney(int money) {

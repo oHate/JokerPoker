@@ -3,6 +3,8 @@ package dev.stevensci.jokerpoker.blind;
 import dev.stevensci.jokerpoker.BlindType;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 
@@ -19,9 +21,9 @@ public class Blind {
     private BlindType type;
     private long targetScore;
 
-    private SimpleLongProperty score = new SimpleLongProperty();
-    private int hands;
-    private int discards;
+    private LongProperty score = new SimpleLongProperty();
+    private IntegerProperty hands = new SimpleIntegerProperty();
+    private IntegerProperty discards = new SimpleIntegerProperty();
     private int handSize;
 
     private int handChips;
@@ -30,8 +32,8 @@ public class Blind {
     public Blind(BlindType type, List<PlayingCard> deck, List<JokerCard> jokers, long targetScore, int hands, int discards, int handSize) {
         this.type = type;
         this.targetScore = targetScore;
-        this.hands = hands;
-        this.discards = discards;
+        this.hands.set(hands);
+        this.discards.set(discards);
         this.handSize = handSize;
 
         this.deck = new Stack<>();
@@ -43,11 +45,20 @@ public class Blind {
 
         this.selectedCards = new ArrayList<>();
         this.result = new HandResult(this.selectedCards);
+    }
 
-        for (int i = 0; i < Math.min(deck.size(), handSize); i++) {
+    public List<PlayingCard> drawCards() {
+        List<PlayingCard> cards = new ArrayList<>();
+
+        int cardsNeeded = Math.min(this.deck.size(), this.handSize - this.getHand().size());
+
+        for (int i = 0; i < cardsNeeded; i++) {
             PlayingCard card = this.deck.pop();
             this.hand.add(card);
+            cards.add(card);
         }
+
+        return cards;
     }
 
     public void selectCard(PlayingCard card) {
@@ -78,8 +89,7 @@ public class Blind {
     }
 
     public void discard() {
-        this.selectedCards.rem
-
+        this.hand.removeAll(this.selectedCards);
         this.selectedCards.clear();
     }
 
@@ -103,16 +113,24 @@ public class Blind {
         return this.result;
     }
 
-    public SimpleLongProperty getScore() {
+    public LongProperty getScore() {
         return this.score;
     }
 
-    public int getHands() {
+    public IntegerProperty getHands() {
         return this.hands;
     }
 
-    public int getDiscards() {
+    public void decrementHands() {
+        this.hands.set(this.hands.get() - 1);
+    }
+
+    public IntegerProperty getDiscards() {
         return this.discards;
+    }
+
+    public void decrementDiscards() {
+        this.discards.set(this.discards.get() - 1);
     }
 
     public int getHandSize() {

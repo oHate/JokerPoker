@@ -2,19 +2,20 @@ package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.Constant;
 import dev.stevensci.jokerpoker.card.PlayingCard;
+import dev.stevensci.jokerpoker.card.meta.CardRank;
+import dev.stevensci.jokerpoker.card.meta.CardSuit;
 import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;
 import dev.stevensci.jokerpoker.elements.PixelatedContentBox;
+import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CardPane extends BorderPane {
 
@@ -50,9 +51,23 @@ public class CardPane extends BorderPane {
         setBackground(new Background(background));
     }
 
-    public void populateHand(List<CardView> cards) {
-        this.cardArea.getChildren().clear();
-        this.cardArea.getChildren().addAll(cards);
+    public List<CardView> addCards(List<PlayingCard> cards) {
+        List<CardView> views = new ArrayList<>();
+
+        for (PlayingCard card : cards) {
+            views.add(new CardView(card));
+        }
+
+        this.cardArea.getChildren().addAll(views);
+
+        return views;
+    }
+
+    public void discard() {
+        this.cardArea.getChildren().removeIf(node -> {
+            if (!(node instanceof CardView cardView)) return false;
+            return cardView.isSelected();
+        });
     }
 
     public Node getBottomNode() {
@@ -69,10 +84,40 @@ public class CardPane extends BorderPane {
                 Constant.ORANGE
         );
 
+        this.sortRankButton.setOnMouseClicked(event -> {
+            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
+                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
+                    return CardRank.values().length - card.getRank().ordinal();
+                }
+
+                return null;
+            }));
+        });
+
         this.sortSuitButton = new PixelatedButton(
                 new Label("Suit", Color.WHITE, Constant.ORANGE.darker()),
                 Constant.ORANGE
         );
+
+        // TODO -> Duplicate code
+
+        this.sortSuitButton.setOnMouseClicked(event -> {
+            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
+                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
+                    return CardRank.values().length - card.getRank().ordinal();
+                }
+
+                return null;
+            }));
+
+            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
+                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
+                    return card.getSuit().ordinal();
+                }
+
+                return null;
+            }));
+        });
 
         GridPane sortHandGrid = new GridPane(Constant.SPACING, 0);
         sortHandGrid.setHgap(Constant.SPACING);
