@@ -12,32 +12,34 @@ import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CardPane extends BorderPane {
 
-    private final List<PlayingCard> hand;
+    private HBox cardArea;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
     private PixelatedButton sortRankButton;
     private PixelatedButton sortSuitButton;
 
-    public CardPane(List<PlayingCard> hand) {
-        this.hand = hand;
-
+    public CardPane() {
         setPadding(Constant.PADDING_INSETS);
 
         Node bottomNode = getBottomNode();
         setAlignment(bottomNode, Pos.CENTER);
         setBottom(bottomNode);
 
-        Node centerNode = getCenterNode();
+        this.cardArea = new HBox(Constant.SPACING);
+        this.cardArea.setFillHeight(false);
+        this.cardArea.setAlignment(Pos.CENTER);
 
-        setAlignment(centerNode, Pos.CENTER);
-        setCenter(centerNode);
+        setAlignment(this.cardArea, Pos.CENTER);
+        setCenter(this.cardArea);
 
-        setTop(getHeaderNode());
+        setTop(getTopNode());
 
         BackgroundImage background = new BackgroundImage(Constant.BACKGROUND_IMAGE,
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
@@ -48,17 +50,9 @@ public class CardPane extends BorderPane {
         setBackground(new Background(background));
     }
 
-    public Node getCenterNode() {
-        HBox centerNode = new HBox(Constant.SPACING);
-        centerNode.setFillHeight(false);
-
-        for (PlayingCard card : this.hand) {
-            centerNode.getChildren().add(new CardView(card));
-        }
-
-        centerNode.setAlignment(Pos.CENTER);
-
-        return centerNode;
+    public void populateHand(List<CardView> cards) {
+        this.cardArea.getChildren().clear();
+        this.cardArea.getChildren().addAll(cards);
     }
 
     public Node getBottomNode() {
@@ -112,7 +106,7 @@ public class CardPane extends BorderPane {
         return container;
     }
 
-    public Node getHeaderNode() {
+    public Node getTopNode() {
         GridPane layout = new GridPane(Constant.SPACING, Constant.SPACING);
 
         layout.getColumnConstraints().addAll(Constant.COL_70, Constant.COL_30);
@@ -130,6 +124,22 @@ public class CardPane extends BorderPane {
         GridPane.setHalignment(consumableCount, HPos.RIGHT);
 
         return layout;
+    }
+
+    public PixelatedButton getPlayHandButton() {
+        return this.playHandButton;
+    }
+
+    public PixelatedButton getDiscardButton() {
+        return this.discardButton;
+    }
+
+    public PixelatedButton getSortRankButton() {
+        return this.sortRankButton;
+    }
+
+    public PixelatedButton getSortSuitButton() {
+        return this.sortSuitButton;
     }
 
 }

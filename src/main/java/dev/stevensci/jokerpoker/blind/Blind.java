@@ -3,6 +3,8 @@ package dev.stevensci.jokerpoker.blind;
 import dev.stevensci.jokerpoker.BlindType;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 
 import java.util.*;
 
@@ -14,17 +16,19 @@ public class Blind {
     private List<PlayingCard> selectedCards;
     private final HandResult result;
 
+    private BlindType type;
     private long targetScore;
 
-    private int roundScore;
-    private int hands = 4;
-    private int discards = 3;
-    private int handSize = 8;
+    private SimpleLongProperty score = new SimpleLongProperty();
+    private int hands;
+    private int discards;
+    private int handSize;
 
-    private int handChips = 0;
-    private int handMultiplier = 0;
+    private int handChips;
+    private int handMultiplier;
 
     public Blind(BlindType type, List<PlayingCard> deck, List<JokerCard> jokers, long targetScore, int hands, int discards, int handSize) {
+        this.type = type;
         this.targetScore = targetScore;
         this.hands = hands;
         this.discards = discards;
@@ -40,26 +44,9 @@ public class Blind {
         this.selectedCards = new ArrayList<>();
         this.result = new HandResult(this.selectedCards);
 
-        for (int i = 0; i < Math.min(deck.size(), 8); i++) {
+        for (int i = 0; i < Math.min(deck.size(), handSize); i++) {
             PlayingCard card = this.deck.pop();
-            hand.add(card);
-        }
-    }
-
-    public Blind(List<PlayingCard> deck, List<JokerCard> jokers) {
-        this.deck = new Stack<>();
-        this.deck.addAll(deck);
-
-        Collections.shuffle(this.deck);
-
-        this.jokers = jokers;
-
-        this.selectedCards = new ArrayList<>();
-        this.result = new HandResult(this.selectedCards);
-
-        for (int i = 0; i < Math.min(deck.size(), 8); i++) {
-            PlayingCard card = this.deck.pop();
-            hand.add(card);
+            this.hand.add(card);
         }
     }
 
@@ -85,7 +72,15 @@ public class Blind {
             card.triggerCardEdition(this);
         }
 
-        this.roundScore += this.handChips * this.handMultiplier;
+        this.score.set(this.score.get() + this.handChips * this.handMultiplier);
+
+        discard();
+    }
+
+    public void discard() {
+        this.selectedCards.rem
+
+        this.selectedCards.clear();
     }
 
     public Stack<PlayingCard> getDeck() {
@@ -108,8 +103,8 @@ public class Blind {
         return this.result;
     }
 
-    public int getRoundScore() {
-        return this.roundScore;
+    public SimpleLongProperty getScore() {
+        return this.score;
     }
 
     public int getHands() {

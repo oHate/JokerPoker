@@ -8,7 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameView extends StackPane {
 
@@ -20,8 +21,13 @@ public class GameView extends StackPane {
     private SidebarPane sidebarPane;
     private CardPane gamePane;
 
+    private final Map<PlayingCard, CardView> cards = new HashMap<>();
+
     public GameView(Stage stage) {
         this.layoutPane = new BorderPane();
+
+        this.gamePane = new CardPane();
+        this.layoutPane.setCenter(this.gamePane);
 
         this.overlayPane = new Pane();
         this.overlayPane.setMouseTransparent(true);
@@ -43,15 +49,14 @@ public class GameView extends StackPane {
         this.layoutPane.setLeft(this.sidebarPane);
     }
 
-    public void initializeGamePane(List<PlayingCard> hand) {
-        this.gamePane = new CardPane(hand);
-        layoutPane.setCenter(this.gamePane);
-    }
-
     public void updateHandType(HandType type) {
         this.sidebarPane.getHandTypeText().setText(type.getDisplay());
         this.sidebarPane.getChipsLabel().setText(String.valueOf(type.getChips()));
         this.sidebarPane.getMultLabel().setText(String.valueOf(type.getMultiplier()));
+    }
+
+    public void updateScore(long score) {
+        this.sidebarPane.getScoreLabel().setText(String.valueOf(score));
     }
 
     public void updateHands(int hands) {
@@ -73,6 +78,18 @@ public class GameView extends StackPane {
 
     public void updateRound(int round) {
         this.sidebarPane.getRoundLabel().setText(String.valueOf(round));
+    }
+
+    public Map<PlayingCard, CardView> getCards() {
+        return this.cards;
+    }
+
+    public SidebarPane getSidebarPane() {
+        return this.sidebarPane;
+    }
+
+    public CardPane getGamePane() {
+        return this.gamePane;
     }
 
 }

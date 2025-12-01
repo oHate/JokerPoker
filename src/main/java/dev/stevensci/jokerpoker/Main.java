@@ -7,13 +7,19 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    private GameModel model;
+    private GameView view;
+    private GameController controller;
+
     @Override
     public void start(Stage stage) throws Exception {
-        GameModel model = new GameModel();
-        GameView view = new GameView(stage);
-        GameController controller = new GameController(model, view);
+        this.model = new GameModel();
 
-        controller.initialize();
+        this.view = new GameView(stage);
+
+        this.controller = new GameController(this.model, this.view);
+        this.controller.initialize();
+
         stage.show();
     }
 

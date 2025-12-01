@@ -2,11 +2,9 @@ package dev.stevensci.jokerpoker;
 
 import dev.stevensci.jokerpoker.view.Draggable;
 import javafx.animation.*;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -114,11 +112,6 @@ public class DragManager {
             this.parent.layout();
 
             this.overlay.getChildren().add(this.node);
-
-            ScaleTransition scale = new ScaleTransition(Duration.millis(200), this.node);
-            scale.setToX(1.2);
-            scale.setToY(1.2);
-            scale.play();
         }
 
         if (this.dragging) {
@@ -141,7 +134,7 @@ public class DragManager {
     }
 
     private void updateDragPosition(MouseEvent event) {
-        this.node.relocate(event.getSceneX() - this.offsetX, event.getSceneY() - this.offsetY);
+        this.node.relocate(event.getSceneX() - this.offsetX - this.node.getTranslateX(), event.getSceneY() - this.offsetY - this.node.getTranslateY());
         updatePlaceholderPosition();
     }
 
@@ -160,14 +153,10 @@ public class DragManager {
                 )
         );
 
-        ScaleTransition scale = new ScaleTransition(Duration.millis(200), this.node);
-        scale.setToX(1);
-        scale.setToY(1);
-
         FadeTransition fade = new FadeTransition(Duration.millis(200), this.placeholder);
         fade.setToValue(0);
 
-        ParallelTransition anim = new ParallelTransition(move, scale, fade);
+        ParallelTransition anim = new ParallelTransition(move, fade);
 
         anim.setOnFinished(e -> {
             this.overlay.getChildren().remove(this.node);

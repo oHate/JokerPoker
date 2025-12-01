@@ -22,10 +22,6 @@ public class PlayingCard extends Card implements Comparable<PlayingCard> {
         this.suit = suit;
     }
 
-    public ImageView getView() {
-        return Constant.CARD_SPRITESHEET.getView(this.rank.ordinal(), this.suit.ordinal());
-    }
-
     public CardRank getRank() {
         return this.rank;
     }
@@ -61,6 +57,11 @@ public class PlayingCard extends Card implements Comparable<PlayingCard> {
     @Override
     public int compareTo(PlayingCard o) {
         return Integer.compare(this.rank.ordinal(), o.getRank().ordinal());
+    }
+
+    @Override
+    public Node createView() {
+        return Constant.CARD_SPRITESHEET.getView(this.rank.ordinal(), this.suit.ordinal());
     }
 
 }

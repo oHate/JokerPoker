@@ -2,6 +2,7 @@ package dev.stevensci.jokerpoker.card;
 
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.meta.CardEdition;
+import javafx.scene.Node;
 
 public abstract class Card {
 
@@ -26,5 +27,7 @@ public abstract class Card {
             case HOLOGRAPHIC -> blind.addHandMultiplier(10);
         }
     }
+
+    abstract public Node createView();
 
 }
