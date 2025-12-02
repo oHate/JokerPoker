@@ -1,6 +1,7 @@
 package dev.stevensci.jokerpoker.blind;
 
 import dev.stevensci.jokerpoker.BlindType;
+import dev.stevensci.jokerpoker.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import javafx.beans.property.IntegerProperty;
@@ -20,6 +21,7 @@ public class Blind {
 
     private BlindType type;
     private long targetScore;
+    private SortMode sortMode = SortMode.NONE;
 
     private LongProperty score = new SimpleLongProperty();
     private IntegerProperty hands = new SimpleIntegerProperty();
@@ -58,6 +60,7 @@ public class Blind {
             cards.add(card);
         }
 
+        sortCards();
         return cards;
     }
 
@@ -91,6 +94,19 @@ public class Blind {
     public void discard() {
         this.hand.removeAll(this.selectedCards);
         this.selectedCards.clear();
+    }
+
+    private void sortCards() {
+        this.hand.sort(this.sortMode.getComparator());
+    }
+
+    public SortMode getSortMode() {
+        return this.sortMode;
+    }
+
+    public void setSortMode(SortMode mode) {
+        this.sortMode = mode;
+        sortCards();
     }
 
     public Stack<PlayingCard> getDeck() {

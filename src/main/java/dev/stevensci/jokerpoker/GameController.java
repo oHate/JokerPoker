@@ -2,6 +2,7 @@ package dev.stevensci.jokerpoker;
 
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.PlayingCard;
+import dev.stevensci.jokerpoker.view.CardPane;
 import dev.stevensci.jokerpoker.view.CardView;
 import dev.stevensci.jokerpoker.view.GameView;
 
@@ -24,33 +25,46 @@ public class GameController {
     }
 
     public void initialize() {
-        // TODO -> remove
+        Blind blind = this.model.getBlind();
+        CardPane game = this.view.getGamePane();
+
         this.view.initializeSidebar(this.model.getBlindType(), this.model.getTargetScore());
 
         this.view.updateDiscards(this.model.getBlind().getDiscards().get());
-        this.model.getBlind().getDiscards().addListener((ov, oldAmount, newAmount) -> {
+        blind.getDiscards().addListener((ov, oldAmount, newAmount) -> {
             this.view.updateDiscards(newAmount.intValue());
         });
 
         this.view.updateHands(this.model.getBlind().getHands().get());
-        this.model.getBlind().getHands().addListener((ov, oldAmount, newAmount) -> {
+        blind.getHands().addListener((ov, oldAmount, newAmount) -> {
             this.view.updateHands(newAmount.intValue());
         });
 
-        this.model.getBlind().getScore().addListener((ov, oldScore, newScore) -> {
+        blind.getScore().addListener((ov, oldScore, newScore) -> {
             this.view.updateScore(newScore.longValue());
         });
 
-        this.view.getGamePane().getPlayHandButton().setOnMouseClicked(event -> {
-            this.model.getBlind().decrementHands();
-            this.model.getBlind().processCurrentHand();
+        game.getPlayHandButton().setOnMouseClicked(event -> {
+            blind.decrementHands();
+            blind.processCurrentHand();
             discard();
         });
 
-        this.view.getGamePane().getDiscardButton().setOnMouseClicked(event -> {
-            this.model.getBlind().decrementDiscards();
+        game.getDiscardButton().setOnMouseClicked(event -> {
+            blind.decrementDiscards();
             discard();
         });
+
+        game.getSortRankButton().setOnMouseClicked(event -> {
+            blind.setSortMode(SortMode.RANK);
+            game.sortCards(SortMode.RANK);
+        });
+
+        game.getSortSuitButton().setOnMouseClicked(event -> {
+            blind.setSortMode(SortMode.SUIT);
+            game.sortCards(SortMode.SUIT);
+        });
+
     }
 
     public void discard() {
@@ -62,22 +76,24 @@ public class GameController {
 
     public void drawCardsToHand() {
         Blind blind = this.model.getBlind();
+        CardPane view = this.view.getGamePane();
+
         List<PlayingCard> cards = blind.drawCards();
-        List<CardView> views = this.view.getGamePane().addCards(cards);
+        List<CardView> cardViews = view.addCards(cards);
 
-        for (CardView view : views) {
-            view.setOnMouseClicked(event -> {
-                if (!(view.getCard() instanceof PlayingCard card)) {
+        view.sortCards(blind.getSortMode());
+
+        for (CardView cardView : cardViews) {
+            cardView.setOnMouseClicked(event -> {
+                PlayingCard card = (PlayingCard) cardView.getCard();
+
+                if (blind.getSelectedCards().size() == 5 && !cardView.isSelected()) {
                     return;
                 }
 
-                if (this.model.getBlind().getSelectedCards().size() == 5 && !view.isSelected()) {
-                    return;
-                }
+                cardView.toggleSelected();
 
-                view.toggleSelected();
-
-                if (view.isSelected()) {
+                if (cardView.isSelected()) {
                     this.model.getBlind().selectCard(card);
                 } else {
                     this.model.getBlind().deselectCard(card);

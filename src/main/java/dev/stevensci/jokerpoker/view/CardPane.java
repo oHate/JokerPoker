@@ -1,6 +1,7 @@
 package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.meta.CardRank;
 import dev.stevensci.jokerpoker.card.meta.CardSuit;
@@ -19,7 +20,7 @@ import java.util.*;
 
 public class CardPane extends BorderPane {
 
-    private HBox cardArea;
+    public HBox cardArea;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
@@ -63,6 +64,14 @@ public class CardPane extends BorderPane {
         return views;
     }
 
+    public void sortCards(SortMode mode) {
+        FXCollections.sort(this.cardArea.getChildren(), (a, b) -> {
+            if (!(a instanceof CardView viewA) || (!(b instanceof CardView viewB))) return 0;
+            if (!(viewA.getCard() instanceof PlayingCard cardA) || (!(viewB.getCard() instanceof PlayingCard cardB))) return 0;
+            return mode.getComparator().compare(cardA, cardB);
+        });
+    }
+
     public void discard() {
         this.cardArea.getChildren().removeIf(node -> {
             if (!(node instanceof CardView cardView)) return false;
@@ -84,40 +93,10 @@ public class CardPane extends BorderPane {
                 Constant.ORANGE
         );
 
-        this.sortRankButton.setOnMouseClicked(event -> {
-            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
-                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
-                    return CardRank.values().length - card.getRank().ordinal();
-                }
-
-                return null;
-            }));
-        });
-
         this.sortSuitButton = new PixelatedButton(
                 new Label("Suit", Color.WHITE, Constant.ORANGE.darker()),
                 Constant.ORANGE
         );
-
-        // TODO -> Duplicate code
-
-        this.sortSuitButton.setOnMouseClicked(event -> {
-            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
-                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
-                    return CardRank.values().length - card.getRank().ordinal();
-                }
-
-                return null;
-            }));
-
-            FXCollections.sort(this.cardArea.getChildren(), Comparator.comparing(node -> {
-                if (node instanceof CardView view && view.getCard() instanceof PlayingCard card) {
-                    return card.getSuit().ordinal();
-                }
-
-                return null;
-            }));
-        });
 
         GridPane sortHandGrid = new GridPane(Constant.SPACING, 0);
         sortHandGrid.setHgap(Constant.SPACING);
