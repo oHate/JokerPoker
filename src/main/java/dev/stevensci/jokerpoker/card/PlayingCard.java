@@ -1,9 +1,8 @@
 package dev.stevensci.jokerpoker.card;
 
-import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.card.meta.*;
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 
 public class PlayingCard extends Card implements Comparable<PlayingCard> {
 

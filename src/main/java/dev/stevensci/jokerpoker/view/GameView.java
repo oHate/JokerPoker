@@ -1,7 +1,6 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.BlindType;
-import dev.stevensci.jokerpoker.DragManager;
+import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.blind.HandType;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import javafx.scene.Scene;

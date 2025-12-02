@@ -1,7 +1,7 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.BlindType;
-import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.blind.BlindType;
+import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedContentBox;

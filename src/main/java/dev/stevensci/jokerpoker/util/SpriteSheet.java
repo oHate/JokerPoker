@@ -1,4 +1,4 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.util;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;

@@ -1,5 +1,6 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.blind;
 
+import dev.stevensci.jokerpoker.util.Constant;
 import javafx.scene.paint.Color;
 
 public enum BlindType {

@@ -1,5 +1,7 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.controller;
 
+import dev.stevensci.jokerpoker.model.GameModel;
+import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.view.CardPane;

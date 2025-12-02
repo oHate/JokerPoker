@@ -1,11 +1,12 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.model;
 
+import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.blind.Blind;
+import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.card.meta.CardRank;
 import dev.stevensci.jokerpoker.card.meta.CardSuit;
-import dev.stevensci.jokerpoker.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;

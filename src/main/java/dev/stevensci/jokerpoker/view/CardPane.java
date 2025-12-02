@@ -1,10 +1,8 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.Constant;
-import dev.stevensci.jokerpoker.SortMode;
+import dev.stevensci.jokerpoker.util.Constant;
+import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
-import dev.stevensci.jokerpoker.card.meta.CardRank;
-import dev.stevensci.jokerpoker.card.meta.CardSuit;
 import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;

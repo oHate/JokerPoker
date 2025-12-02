@@ -1,8 +1,9 @@
 package dev.stevensci.jokerpoker;
 
+import dev.stevensci.jokerpoker.controller.GameController;
+import dev.stevensci.jokerpoker.model.GameModel;
 import dev.stevensci.jokerpoker.view.GameView;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {

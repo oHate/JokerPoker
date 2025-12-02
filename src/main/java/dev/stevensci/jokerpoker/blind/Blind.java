@@ -1,7 +1,6 @@
 package dev.stevensci.jokerpoker.blind;
 
-import dev.stevensci.jokerpoker.BlindType;
-import dev.stevensci.jokerpoker.SortMode;
+import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import javafx.beans.property.IntegerProperty;

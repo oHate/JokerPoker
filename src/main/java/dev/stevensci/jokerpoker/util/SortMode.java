@@ -1,4 +1,4 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.util;
 
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.meta.CardRank;

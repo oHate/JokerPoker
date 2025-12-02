@@ -1,6 +1,6 @@
 package dev.stevensci.jokerpoker.elements;
 
-import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.util.Constant;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;

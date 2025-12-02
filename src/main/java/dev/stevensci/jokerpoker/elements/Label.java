@@ -1,6 +1,6 @@
 package dev.stevensci.jokerpoker.elements;
 
-import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.util.Constant;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;

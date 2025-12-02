@@ -1,6 +1,5 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.view.Draggable;
 import javafx.animation.*;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;

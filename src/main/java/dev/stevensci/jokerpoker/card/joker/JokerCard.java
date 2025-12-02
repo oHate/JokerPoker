@@ -1,6 +1,6 @@
 package dev.stevensci.jokerpoker.card.joker;
 
-import dev.stevensci.jokerpoker.Constant;
+import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.Card;
 import dev.stevensci.jokerpoker.card.PlayingCard;

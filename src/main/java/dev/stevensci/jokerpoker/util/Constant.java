@@ -1,14 +1,12 @@
-package dev.stevensci.jokerpoker;
+package dev.stevensci.jokerpoker.util;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.text.NumberFormat;
 
