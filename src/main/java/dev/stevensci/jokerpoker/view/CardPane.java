@@ -135,6 +135,7 @@ public class CardPane extends BorderPane {
 
         HBox jokerBox = new HBox(Constant.SPACING);
         jokerBox.setAlignment(Pos.CENTER);
+        
 
         layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox), new PixelatedBox(Constant.GRAY));
 
