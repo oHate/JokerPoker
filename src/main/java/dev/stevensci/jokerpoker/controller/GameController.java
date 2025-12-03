@@ -7,7 +7,10 @@ import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.view.CardPane;
 import dev.stevensci.jokerpoker.view.CardView;
 import dev.stevensci.jokerpoker.view.GameView;
+import javafx.scene.Node;
+import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
@@ -33,26 +36,40 @@ public class GameController {
         this.view.initializeSidebar(this.model.getBlindType(), this.model.getTargetScore());
 
         this.view.updateDiscards(this.model.getBlind().getDiscards().get());
-        blind.getDiscards().addListener((ov, oldAmount, newAmount) -> {
-            this.view.updateDiscards(newAmount.intValue());
-        });
+        blind.getDiscards().addListener(_ -> this.view.updateDiscards(blind.getDiscards().get()));
 
         this.view.updateHands(this.model.getBlind().getHands().get());
-        blind.getHands().addListener((ov, oldAmount, newAmount) -> {
-            this.view.updateHands(newAmount.intValue());
-        });
+        blind.getHands().addListener(_ -> this.view.updateHands(blind.getHands().get()));
 
-        blind.getScore().addListener((ov, oldScore, newScore) -> {
-            this.view.updateScore(newScore.longValue());
-        });
+        blind.getScore().addListener(_ -> this.view.updateScore(blind.getScore().get()));
 
         game.getPlayHandButton().setOnMouseClicked(event -> {
+            if (blind.getHands().get() <= 0) return;
             blind.decrementHands();
             blind.processCurrentHand();
-            discard();
+//            discard();
+
+            final Duration delayBetween = Duration.millis(120);  // stagger
+
+            List<Node> nodes = new ArrayList<>(this.view.getGamePane().getCardArea().getChildren());
+            nodes.removeIf(node -> !(node instanceof CardView cardView) || !cardView.isSelected());
+
+            for (int i = 0; i < nodes.size(); i++) {
+                Node node = nodes.get(i);
+                
+//                showDiamond(this.view.getOverlayPane(), node);
+//
+//                playSingleAnimation(node, delayBetween.multiply(i));
+            }
+
+//            if (blind.getScore().get() >= blind.getTargetScore()) {
+//                // TODO -> Win condition
+//            }
         });
 
         game.getDiscardButton().setOnMouseClicked(event -> {
+            if (blind.getSelectedCards().isEmpty()) return;
+            if (blind.getDiscards().get() <= 0) return;
             blind.decrementDiscards();
             discard();
         });

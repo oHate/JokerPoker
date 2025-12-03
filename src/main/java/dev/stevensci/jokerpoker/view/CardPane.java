@@ -18,7 +18,7 @@ import java.util.*;
 
 public class CardPane extends BorderPane {
 
-    public HBox cardArea;
+    private HBox cardArea;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
@@ -146,6 +146,10 @@ public class CardPane extends BorderPane {
         GridPane.setHalignment(consumableCount, HPos.RIGHT);
 
         return layout;
+    }
+
+    public HBox getCardArea() {
+        return this.cardArea;
     }
 
     public PixelatedButton getPlayHandButton() {

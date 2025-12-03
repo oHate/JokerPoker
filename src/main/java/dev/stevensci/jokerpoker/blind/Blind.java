@@ -108,6 +108,10 @@ public class Blind {
         sortCards();
     }
 
+    public long getTargetScore() {
+        return this.targetScore;
+    }
+
     public Stack<PlayingCard> getDeck() {
         return this.deck;
     }

@@ -2,13 +2,9 @@ package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.blind.HandType;
-import dev.stevensci.jokerpoker.card.PlayingCard;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class GameView extends StackPane {
 
@@ -19,8 +15,6 @@ public class GameView extends StackPane {
 
     private SidebarPane sidebarPane;
     private CardPane gamePane;
-
-    private final Map<PlayingCard, CardView> cards = new HashMap<>();
 
     public GameView(Stage stage) {
         this.layoutPane = new BorderPane();
@@ -79,8 +73,8 @@ public class GameView extends StackPane {
         this.sidebarPane.getRoundLabel().setText(String.valueOf(round));
     }
 
-    public Map<PlayingCard, CardView> getCards() {
-        return this.cards;
+    public Pane getOverlayPane() {
+        return this.overlayPane;
     }
 
     public SidebarPane getSidebarPane() {
