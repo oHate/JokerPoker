@@ -3,6 +3,7 @@ package dev.stevensci.jokerpoker.view;
 import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
+import dev.stevensci.jokerpoker.card.joker.common.JimboJoker;
 import dev.stevensci.jokerpoker.elements.Label;
 import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;
@@ -138,6 +139,9 @@ public class CardPane extends BorderPane {
 
         HBox jokerBox = new HBox(Constant.SPACING);
         jokerBox.setAlignment(Pos.CENTER);
+        jokerBox.getChildren().addAll(
+                new JokerCardView(new JimboJoker())
+        );
 
         layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox), new PixelatedBox(Constant.GRAY));
 

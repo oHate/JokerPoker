@@ -31,12 +31,15 @@ public class HandResult {
         return this.handTypeProperty.get();
     }
 
+    // Method to update the hand type based on the current hand to rank or suit using their respective buttons
+    // This method should be called whenever the hand is modified or when the player clicks the rank or suit button
     public void updateHandType() {
         this.sortedHand.clear();
         this.sortedHand.addAll(this.hand);
         this.sortedHand.sort(Comparator.comparing(PlayingCard::getRank));
 
         this.handTypeProperty.set(computeHandType());
+
     }
 
     private HandType computeHandType() {
@@ -211,4 +214,7 @@ public class HandResult {
         return countPairs() == 1;
     }
 
+    // We want now to when the player clicks the rank button, the hand type is updated
+
+    
 }
