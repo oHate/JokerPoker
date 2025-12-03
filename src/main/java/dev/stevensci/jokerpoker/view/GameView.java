@@ -13,6 +13,7 @@ public class GameView extends StackPane {
     private final Scene scene;
     private final DragManager dragManager;
 
+    private ContinuePane continuePane = new ContinuePane();
     private SidebarPane sidebarPane;
     private CardPane gamePane;
 
@@ -24,6 +25,7 @@ public class GameView extends StackPane {
 
         this.overlayPane = new Pane();
         this.overlayPane.setMouseTransparent(true);
+        this.overlayPane.getChildren().add(this.continuePane);
 
         getChildren().addAll(this.layoutPane, this.overlayPane);
 
@@ -75,6 +77,10 @@ public class GameView extends StackPane {
 
     public Pane getOverlayPane() {
         return this.overlayPane;
+    }
+
+    public ContinuePane getContinuePane() {
+        return this.continuePane;
     }
 
     public SidebarPane getSidebarPane() {

@@ -1,30 +1,25 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.card.Card;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
 public class CardView extends StackPane implements Draggable {
 
-    private final Card card;
+    private final PlayingCard card;
     private final Node view;
 
     private boolean selected;
 
-    public CardView(Card card) {
+    public CardView(PlayingCard card) {
         this.card = card;
         this.view = card.createView();
 
         getChildren().add(this.view);
     }
 
-    public Card getCard() {
+    public PlayingCard getCard() {
         return this.card;
-    }
-
-    public Node getView() {
-        return this.view;
     }
 
     public boolean isSelected() {

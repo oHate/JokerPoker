@@ -6,8 +6,6 @@ import javafx.scene.Node;
 
 public class PlayingCard extends Card implements Comparable<PlayingCard> {
 
-    private Node node;
-
     private CardRank rank;
     private CardSuit suit;
 

@@ -7,6 +7,8 @@ import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.card.meta.CardRank;
 import dev.stevensci.jokerpoker.card.meta.CardSuit;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +27,18 @@ public class GameModel {
     private int hands = DEFAULT_HANDS;
     private int discards = DEFAULT_DISCARDS;
     private int baseHandSize = DEFAULT_HAND_SIZE;
-    private int round = 1;
-    private int ante = 1;
+    private IntegerProperty round = new SimpleIntegerProperty(1);
+    private IntegerProperty ante = new SimpleIntegerProperty(1);
 
     private Blind blind;
 
     public GameModel() {
         initializeDeck();
-
-        this.blind = createBlind();
+        updateBlind();
     }
 
-    private Blind createBlind() {
-        return new Blind(
+    public void updateBlind() {
+        this.blind = new Blind(
                 getBlindType(),
                 this.deck,
                 this.jokers,
@@ -57,11 +58,19 @@ public class GameModel {
     }
 
     public long getTargetScore() {
-        return Constant.SCORE_ARRAY[this.round];
+        return (long) (Constant.SCORE_ARRAY[this.ante.get()] * getBlindType().getMultiplier());
     }
 
     public BlindType getBlindType() {
-        return BlindType.values()[(this.round - 1) % 3];
+        return BlindType.values()[(this.round.get() - 1) % 3];
+    }
+
+    public IntegerProperty getRound() {
+        return this.round;
+    }
+
+    public IntegerProperty getAnte() {
+        return this.ante;
     }
 
     public List<PlayingCard> getDeck() {

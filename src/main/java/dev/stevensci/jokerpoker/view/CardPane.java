@@ -18,7 +18,7 @@ import java.util.*;
 
 public class CardPane extends BorderPane {
 
-    private HBox cardArea;
+    private final HBox cardArea;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
@@ -50,6 +50,10 @@ public class CardPane extends BorderPane {
         setBackground(new Background(background));
     }
 
+    public void reset() {
+        this.cardArea.getChildren().clear();
+    }
+
     public List<CardView> addCards(List<PlayingCard> cards) {
         List<CardView> views = new ArrayList<>();
 
@@ -65,8 +69,7 @@ public class CardPane extends BorderPane {
     public void sortCards(SortMode mode) {
         FXCollections.sort(this.cardArea.getChildren(), (a, b) -> {
             if (!(a instanceof CardView viewA) || (!(b instanceof CardView viewB))) return 0;
-            if (!(viewA.getCard() instanceof PlayingCard cardA) || (!(viewB.getCard() instanceof PlayingCard cardB))) return 0;
-            return mode.getComparator().compare(cardA, cardB);
+            return mode.getComparator().compare(viewA.getCard(), viewB.getCard());
         });
     }
 

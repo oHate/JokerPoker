@@ -108,6 +108,10 @@ public class Blind {
         sortCards();
     }
 
+    public BlindType getType() {
+        return this.type;
+    }
+
     public long getTargetScore() {
         return this.targetScore;
     }

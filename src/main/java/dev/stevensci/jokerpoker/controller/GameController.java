@@ -1,12 +1,16 @@
 package dev.stevensci.jokerpoker.controller;
 
+import dev.stevensci.jokerpoker.blind.BlindType;
+import dev.stevensci.jokerpoker.blind.HandType;
 import dev.stevensci.jokerpoker.model.GameModel;
 import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.view.CardPane;
 import dev.stevensci.jokerpoker.view.CardView;
+import dev.stevensci.jokerpoker.view.ContinuePane;
 import dev.stevensci.jokerpoker.view.GameView;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
@@ -21,17 +25,17 @@ public class GameController {
     public GameController(GameModel model, GameView view) {
         this.model = model;
         this.view = view;
-
-        drawCardsToHand();
-
-        this.model.getBlind().getResult().getHandTypeProperty().addListener((ov, oldType, newType) -> {
-            this.view.updateHandType(newType);
-        });
     }
 
     public void initialize() {
         Blind blind = this.model.getBlind();
         CardPane game = this.view.getGamePane();
+
+        drawCardsToHand();
+
+        this.model.getBlind().getResult().getHandTypeProperty().addListener(_ -> {
+            this.view.updateHandType(this.model.getBlind().getResult().getHandType());
+        });
 
         this.view.initializeSidebar(this.model.getBlindType(), this.model.getTargetScore());
 
@@ -43,46 +47,52 @@ public class GameController {
 
         blind.getScore().addListener(_ -> this.view.updateScore(blind.getScore().get()));
 
-        game.getPlayHandButton().setOnMouseClicked(event -> {
-            if (blind.getHands().get() <= 0) return;
+        game.getPlayHandButton().setOnMouseClicked(_ -> {
+            if (blind.getHands().get() <= 0 || blind.getResult().getHandType() == HandType.NONE) return;
             blind.decrementHands();
             blind.processCurrentHand();
-//            discard();
 
-            final Duration delayBetween = Duration.millis(120);  // stagger
+            discard();
 
-            List<Node> nodes = new ArrayList<>(this.view.getGamePane().getCardArea().getChildren());
-            nodes.removeIf(node -> !(node instanceof CardView cardView) || !cardView.isSelected());
-
-            for (int i = 0; i < nodes.size(); i++) {
-                Node node = nodes.get(i);
-                
-//                showDiamond(this.view.getOverlayPane(), node);
-//
-//                playSingleAnimation(node, delayBetween.multiply(i));
-            }
-
-//            if (blind.getScore().get() >= blind.getTargetScore()) {
-//                // TODO -> Win condition
-//            }
+            this.view.getContinuePane().display();
         });
 
-        game.getDiscardButton().setOnMouseClicked(event -> {
+        game.getDiscardButton().setOnMouseClicked(_ -> {
             if (blind.getSelectedCards().isEmpty()) return;
             if (blind.getDiscards().get() <= 0) return;
             blind.decrementDiscards();
             discard();
         });
 
-        game.getSortRankButton().setOnMouseClicked(event -> {
+        game.getSortRankButton().setOnMouseClicked(_ -> {
             blind.setSortMode(SortMode.RANK);
             game.sortCards(SortMode.RANK);
         });
 
-        game.getSortSuitButton().setOnMouseClicked(event -> {
+        game.getSortSuitButton().setOnMouseClicked(_ -> {
             blind.setSortMode(SortMode.SUIT);
             game.sortCards(SortMode.SUIT);
         });
+
+        this.view.getContinuePane().getContinueButton().setOnMouseClicked(_ -> {
+            // TODO -> Add round money
+
+            if (this.model.getBlindType() == BlindType.BOSS) {
+                this.model.getAnte().set(this.model.getAnte().get() + 1);
+            }
+
+            this.model.getRound().set(this.model.getRound().get() + 1);
+
+            this.view.getContinuePane().hide();
+            this.model.updateBlind();
+            this.view.getGamePane().reset();
+
+            initialize();
+        });
+
+//        this.view.getShopPane().getContinueButton().setOnMouseClicked(_ -> {
+//             TODO ->
+//        });
 
     }
 
@@ -104,7 +114,7 @@ public class GameController {
 
         for (CardView cardView : cardViews) {
             cardView.setOnMouseClicked(event -> {
-                PlayingCard card = (PlayingCard) cardView.getCard();
+                PlayingCard card = cardView.getCard();
 
                 if (blind.getSelectedCards().size() == 5 && !cardView.isSelected()) {
                     return;

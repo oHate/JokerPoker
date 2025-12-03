@@ -1,4 +1,5 @@
 package dev.stevensci.jokerpoker.card.joker.common;
+
 import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 
