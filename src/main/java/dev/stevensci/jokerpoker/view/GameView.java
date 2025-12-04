@@ -2,6 +2,7 @@ package dev.stevensci.jokerpoker.view;
 
 import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.blind.HandType;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -28,7 +29,7 @@ public class GameView extends StackPane {
 
         this.overlayPane = new Pane();
         this.overlayPane.setMouseTransparent(true);
-        this.gamePane.getChildren().add(this.continuePane);
+        this.overlayPane.getChildren().add(this.continuePane);
 
         getChildren().addAll(this.layoutPane, this.overlayPane);
 
