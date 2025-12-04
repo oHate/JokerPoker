@@ -33,7 +33,8 @@ public class ContinuePane extends PixelatedBox {
 
         getChildren().add(this.root);
 
-        setPrefSize(500, 500);
+        setMaxSize(500, 500);
+        setMinSize(500, 500);
     }
 
     @Override
@@ -46,31 +47,35 @@ public class ContinuePane extends PixelatedBox {
         double parentHeight = parent.getHeight();
 
         double width = getWidth();
-        double height = getHeight();
+        double height = getHeight(); // TODO -> gets changed after set so animation gets messed up
 
         setLayoutX((parentWidth - width) / 2);
         setLayoutY(parentHeight - height);
         setTranslateY(height);
+
+        System.out.println("LY: " + getLayoutY());
     }
 
     public void display() {
         TranslateTransition transition = new TranslateTransition(Duration.millis(300), this);
         transition.setToY(20);
-        transition.setInterpolator(Interpolator.EASE_OUT);
+        transition.setInterpolator(Interpolator.EASE_BOTH);
         transition.play();
 
         // TODO -> This will disable mouse clicks but should be reverted after continue is clicked
-        getParent().setMouseTransparent(false);
+//        getParent().setMouseTransparent(false);
     }
 
     public void hide() {
         TranslateTransition transition = new TranslateTransition(Duration.millis(300), this);
         transition.setToY(getHeight());
-        transition.setInterpolator(Interpolator.EASE_OUT);
+        transition.setInterpolator(Interpolator.EASE_BOTH);
         transition.play();
 
+        System.out.println("LY: " + getLayoutY());
+
         // TODO -> This will disable mouse clicks but should be reverted after continue is clicked
-        getParent().setMouseTransparent(true);
+//        getParent().setMouseTransparent(true);
     }
 
     public PixelatedButton getContinueButton() {

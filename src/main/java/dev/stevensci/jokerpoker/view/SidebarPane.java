@@ -14,8 +14,8 @@ import javafx.scene.text.Text;
 
 public class SidebarPane extends Pane {
 
-    private final BlindType type;
-    private final long targetScore;
+    private final VBox root = new VBox(Constant.SPACING);
+    private final StackPane header = new StackPane();
 
     private Text scoreLabel;
     private Text handTypeText;
@@ -27,50 +27,48 @@ public class SidebarPane extends Pane {
     private Text anteLabel;
     private Text roundLabel;
 
-    public SidebarPane(BlindType type, long targetScore) {
-        this.type = type;
-        this.targetScore = targetScore;
-
-        VBox root = new VBox(Constant.SPACING);
-        root.setPadding(Constant.PADDING_INSETS);
-
-        root.prefHeightProperty().bind(heightProperty());
-        root.setBorder(new Border(new BorderStroke(
-                Color.TRANSPARENT, type.getSecondaryColor(), Color.TRANSPARENT, type.getSecondaryColor(),
-                BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY, new BorderWidths(Constant.SPACING), Insets.EMPTY
-        )));
-        root.setBackground(Background.fill(Constant.GRAY));
-
-        root.getChildren().addAll(
-                getHeaderNode(),
+    public SidebarPane() {
+        this.root.setPadding(Constant.PADDING_INSETS);
+        this.root.prefHeightProperty().bind(heightProperty());
+        this.root.setBackground(Background.fill(Constant.GRAY));
+        this.root.getChildren().addAll(
+                this.header,
                 getRoundScoreNode(),
                 getHandTypeNode(),
                 getFooterNode()
         );
 
-        getChildren().add(root);
+        getChildren().add(this.root);
     }
 
-    public Node getHeaderNode() {
+    public void updateHeader(BlindType type, long targetScore) {
         VBox layout = new VBox(Constant.SPACING,
-                new PixelatedContentBox(this.type.getPrimaryColor(),
-                        new Label(this.type.getDisplay(), Color.WHITE, this.type.getPrimaryColor().darker())
+                new PixelatedContentBox(type.getPrimaryColor(),
+                        new Label(type.getDisplay(), Color.WHITE, type.getPrimaryColor().darker())
                 ),
                 new PixelatedContentBox(type.getSecondaryColor(),
-                        new Label("Score at Least", Color.WHITE, this.type.getSecondaryColor().darker()),
-                        new PixelatedContentBox(this.type.getPrimaryColor(),
-                                new Label(Constant.NUMBER_FORMAT.format(this.targetScore), Color.WHITE, this.type.getPrimaryColor().darker())
+                        new Label("Score at Least", Color.WHITE, type.getSecondaryColor().darker()),
+                        new PixelatedContentBox(type.getPrimaryColor(),
+                                new Label(Constant.NUMBER_FORMAT.format(targetScore), Color.WHITE, type.getPrimaryColor().darker())
                         )
                 )
         );
 
         layout.setPadding(Constant.PADDING_INSETS);
 
-        return new StackPane(new PixelatedBox(Constant.DARK_GRAY), layout);
+        this.header.getChildren().clear();
+        this.header.getChildren().addAll(new PixelatedBox(Constant.DARK_GRAY), layout);
     }
 
-    public Node getFooterNode() {
+    public void updateBorder(BlindType type) {
+        this.root.setBorder(new Border(new BorderStroke(
+                Color.TRANSPARENT, type.getSecondaryColor(), Color.TRANSPARENT, type.getSecondaryColor(),
+                BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY, new BorderWidths(Constant.SPACING), Insets.EMPTY
+        )));
+    }
+
+    private Node getFooterNode() {
         this.handsLabel = new Label("0", Constant.LIGHT_BLUE, Constant.GRAY.darker());
         this.discardsLabel = new Label("0", Constant.LIGHT_RED, Constant.GRAY.darker());
         this.moneyLabel = new Label("$0", Constant.LIGHT_YELLOW, Constant.GRAY.darker());
@@ -113,7 +111,7 @@ public class SidebarPane extends Pane {
         return layout;
     }
 
-    public Node getHandTypeNode() {
+    private Node getHandTypeNode() {
         GridPane layout = new GridPane(Constant.SPACING, 0);
         layout.getColumnConstraints().addAll(Constant.COL_45, Constant.COL_10, Constant.COL_45);
 

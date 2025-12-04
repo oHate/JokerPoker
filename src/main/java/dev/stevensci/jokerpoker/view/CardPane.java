@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 
 import java.util.*;
 
-public class CardPane extends BorderPane {
+public class CardPane extends StackPane {
 
     private final HBox cardArea;
 
@@ -29,18 +29,20 @@ public class CardPane extends BorderPane {
     public CardPane() {
         setPadding(Constant.PADDING_INSETS);
 
+        BorderPane root = new BorderPane();
+
         Node bottomNode = getBottomNode();
         setAlignment(bottomNode, Pos.CENTER);
-        setBottom(bottomNode);
+        root.setBottom(bottomNode);
 
         this.cardArea = new HBox(Constant.SPACING);
         this.cardArea.setFillHeight(false);
         this.cardArea.setAlignment(Pos.CENTER);
 
         setAlignment(this.cardArea, Pos.CENTER);
-        setCenter(this.cardArea);
+        root.setCenter(this.cardArea);
 
-        setTop(getTopNode());
+        root.setTop(getTopNode());
 
         BackgroundImage background = new BackgroundImage(Constant.BACKGROUND_IMAGE,
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
@@ -49,6 +51,7 @@ public class CardPane extends BorderPane {
         );
 
         setBackground(new Background(background));
+        getChildren().add(root);
     }
 
     public void reset() {
@@ -127,7 +130,6 @@ public class CardPane extends BorderPane {
 
         HBox container = new HBox(new PixelatedContentBox(Constant.DARK_GRAY, root));
         container.setAlignment(Pos.CENTER);
-        container.setMaxWidth(Region.USE_PREF_SIZE);
 
         return container;
     }
@@ -135,7 +137,7 @@ public class CardPane extends BorderPane {
     public Node getTopNode() {
         GridPane layout = new GridPane(Constant.SPACING, Constant.SPACING);
 
-        layout.getColumnConstraints().addAll(Constant.COL_70, Constant.COL_30);
+        layout.getColumnConstraints().addAll(Constant.COL_100);
 
         HBox jokerBox = new HBox(Constant.SPACING);
         jokerBox.setAlignment(Pos.CENTER);
@@ -143,14 +145,14 @@ public class CardPane extends BorderPane {
                 new JokerCardView(new JimboJoker())
         );
 
-        layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox), new PixelatedBox(Constant.GRAY));
+        layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox)); // new PixelatedBox(Constant.GRAY)
 
-        Label jokerCount = new Label("2/5", Color.WHITE, Constant.GRAY.darker());
-        Label consumableCount = new Label("0/2", Color.WHITE, Constant.GRAY.darker());
-        layout.addRow(1, jokerCount, consumableCount);
+        Label jokerCount = new Label("0/5", Color.WHITE, Constant.GRAY.darker());
+//        Label consumableCount = new Label("0/2", Color.WHITE, Constant.GRAY.darker());
+//        layout.addRow(1, jokerCount, consumableCount);
 
         GridPane.setHalignment(jokerCount, HPos.LEFT);
-        GridPane.setHalignment(consumableCount, HPos.RIGHT);
+//        GridPane.setHalignment(consumableCount, HPos.RIGHT);
 
         return layout;
     }

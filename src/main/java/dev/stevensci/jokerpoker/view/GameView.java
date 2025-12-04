@@ -23,9 +23,12 @@ public class GameView extends StackPane {
         this.gamePane = new CardPane();
         this.layoutPane.setCenter(this.gamePane);
 
+        this.sidebarPane = new SidebarPane();
+        this.layoutPane.setLeft(this.sidebarPane);
+
         this.overlayPane = new Pane();
         this.overlayPane.setMouseTransparent(true);
-        this.overlayPane.getChildren().add(this.continuePane);
+        this.gamePane.getChildren().add(this.continuePane);
 
         getChildren().addAll(this.layoutPane, this.overlayPane);
 
@@ -37,11 +40,6 @@ public class GameView extends StackPane {
         stage.setTitle("Joker Poker");
         stage.setScene(this.scene);
         stage.setResizable(false);
-    }
-
-    public void initializeSidebar(BlindType type, long targetScore) {
-        this.sidebarPane = new SidebarPane(type, targetScore);
-        this.layoutPane.setLeft(this.sidebarPane);
     }
 
     public void updateHandType(HandType type) {
@@ -68,7 +66,7 @@ public class GameView extends StackPane {
     }
 
     public void updateAnte(int ante) {
-        this.sidebarPane.getAnteLabel().setText(String.valueOf(ante));
+        this.sidebarPane.getAnteLabel().setText(ante + "/8");
     }
 
     public void updateRound(int round) {

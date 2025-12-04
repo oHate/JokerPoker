@@ -8,13 +8,8 @@ import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.view.CardPane;
 import dev.stevensci.jokerpoker.view.CardView;
-import dev.stevensci.jokerpoker.view.ContinuePane;
 import dev.stevensci.jokerpoker.view.GameView;
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
@@ -25,6 +20,9 @@ public class GameController {
     public GameController(GameModel model, GameView view) {
         this.model = model;
         this.view = view;
+
+        model.getRound().addListener(_ -> view.updateRound(model.getRound().get()));
+        model.getAnte().addListener(_ -> view.updateAnte(model.getAnte().get()));
     }
 
     public void initialize() {
@@ -37,7 +35,8 @@ public class GameController {
             this.view.updateHandType(this.model.getBlind().getResult().getHandType());
         });
 
-        this.view.initializeSidebar(this.model.getBlindType(), this.model.getTargetScore());
+        this.view.getSidebarPane().updateHeader(this.model.getBlindType(), this.model.getTargetScore());
+        this.view.getSidebarPane().updateBorder(this.model.getBlindType());
 
         this.view.updateDiscards(this.model.getBlind().getDiscards().get());
         blind.getDiscards().addListener(_ -> this.view.updateDiscards(blind.getDiscards().get()));

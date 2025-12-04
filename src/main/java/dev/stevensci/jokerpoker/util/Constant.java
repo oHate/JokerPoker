@@ -14,6 +14,7 @@ public class Constant {
 
     public static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
+    public static final ColumnConstraints COL_100 = createColumnConstraints(100);
     public static final ColumnConstraints COL_50 = createColumnConstraints(50);
     public static final ColumnConstraints COL_45 = createColumnConstraints(45);
     public static final ColumnConstraints COL_10 = createColumnConstraints(10);
