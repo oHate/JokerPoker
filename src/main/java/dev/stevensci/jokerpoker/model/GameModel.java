@@ -29,6 +29,7 @@ public class GameModel {
     private int baseHandSize = DEFAULT_HAND_SIZE;
     private IntegerProperty round = new SimpleIntegerProperty(1);
     private IntegerProperty ante = new SimpleIntegerProperty(1);
+    private IntegerProperty cash = new SimpleIntegerProperty(0);
 
     private Blind blind;
 
@@ -63,6 +64,10 @@ public class GameModel {
 
     public BlindType getBlindType() {
         return BlindType.values()[(this.round.get() - 1) % 3];
+    }
+
+    public IntegerProperty getCash() {
+        return this.cash;
     }
 
     public IntegerProperty getRound() {

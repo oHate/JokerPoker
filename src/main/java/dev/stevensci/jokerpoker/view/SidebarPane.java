@@ -23,7 +23,7 @@ public class SidebarPane extends Pane {
     private Text multLabel;
     private Text handsLabel;
     private Text discardsLabel;
-    private Text moneyLabel;
+    private Text cashLabel;
     private Text anteLabel;
     private Text roundLabel;
 
@@ -71,7 +71,7 @@ public class SidebarPane extends Pane {
     private Node getFooterNode() {
         this.handsLabel = new Label("0", Constant.LIGHT_BLUE, Constant.GRAY.darker());
         this.discardsLabel = new Label("0", Constant.LIGHT_RED, Constant.GRAY.darker());
-        this.moneyLabel = new Label("$0", Constant.LIGHT_YELLOW, Constant.GRAY.darker());
+        this.cashLabel = new Label("$0", Constant.LIGHT_YELLOW, Constant.GRAY.darker());
         this.anteLabel = new Label("1/8", Constant.LIGHT_ORANGE, Constant.GRAY.darker());
         this.roundLabel = new Label("1", Constant.LIGHT_ORANGE, Constant.GRAY.darker());
 
@@ -91,8 +91,8 @@ public class SidebarPane extends Pane {
 
         layout.add(
                 new PixelatedContentBox(Constant.DARK_GRAY,
-                        new Label("Money", Color.WHITE, Constant.DARK_GRAY.darker()),
-                        new PixelatedContentBox(Constant.GRAY, this.moneyLabel)
+                        new Label("Cash", Color.WHITE, Constant.DARK_GRAY.darker()),
+                        new PixelatedContentBox(Constant.GRAY, this.cashLabel)
                 ),
                 0, 1, 2, 1
         );
@@ -177,8 +177,8 @@ public class SidebarPane extends Pane {
         return this.discardsLabel;
     }
 
-    public Text getMoneyLabel() {
-        return this.moneyLabel;
+    public Text getCashLabel() {
+        return this.cashLabel;
     }
 
     public Text getAnteLabel() {

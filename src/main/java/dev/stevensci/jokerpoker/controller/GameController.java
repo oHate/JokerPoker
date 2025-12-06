@@ -1,15 +1,21 @@
 package dev.stevensci.jokerpoker.controller;
 
+import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.blind.HandType;
+import dev.stevensci.jokerpoker.card.PlayingCard;
+import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.model.GameModel;
 import dev.stevensci.jokerpoker.util.SortMode;
-import dev.stevensci.jokerpoker.blind.Blind;
-import dev.stevensci.jokerpoker.card.PlayingCard;
-import dev.stevensci.jokerpoker.view.CardPane;
-import dev.stevensci.jokerpoker.view.CardView;
-import dev.stevensci.jokerpoker.view.GameView;
+import dev.stevensci.jokerpoker.view.*;
+import javafx.animation.SequentialTransition;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
+import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
@@ -17,17 +23,22 @@ public class GameController {
     private final GameModel model;
     private final GameView view;
 
+    private final ShopController shopController = new ShopController();
+    private final TooltipManager tooltipManager;
+
     public GameController(GameModel model, GameView view) {
         this.model = model;
         this.view = view;
+        this.tooltipManager = new TooltipManager(this.view.getOverlayPane());
 
+        model.getCash().addListener(_ -> view.updateCash(model.getCash().get()));
         model.getRound().addListener(_ -> view.updateRound(model.getRound().get()));
         model.getAnte().addListener(_ -> view.updateAnte(model.getAnte().get()));
     }
 
     public void initialize() {
         Blind blind = this.model.getBlind();
-        CardPane game = this.view.getGamePane();
+        GamePane game = this.view.getGamePane();
 
         drawCardsToHand();
 
@@ -44,16 +55,61 @@ public class GameController {
         this.view.updateHands(this.model.getBlind().getHands().get());
         blind.getHands().addListener(_ -> this.view.updateHands(blind.getHands().get()));
 
+        this.view.updateScore(0);
         blind.getScore().addListener(_ -> this.view.updateScore(blind.getScore().get()));
 
         game.getPlayHandButton().setOnMouseClicked(_ -> {
             if (blind.getHands().get() <= 0 || blind.getResult().getHandType() == HandType.NONE) return;
             blind.decrementHands();
+
+
+            // TODO -> Lock current joker hand. Get the HBox loop through all jokers and make a list and replace the current joker list with that list.
+
+            this.model.getJokers().clear();
+            this.view.getGamePane().getJokerArea().getChildren().forEach(node -> {
+                if (!(node instanceof JokerCardView view)) return;
+                this.model.getJokers().add(view.getCard());
+            });
+
             blind.processCurrentHand();
 
             discard();
 
-            this.view.getContinuePane().display();
+            // TODO -> Win condition
+            if (blind.getScore().get() >= blind.getTargetScore()) {
+                this.view.lockMouseClicks();
+
+                List<Pair<String, Integer>> cashBreakdown = new ArrayList<>();
+
+                cashBreakdown.add(new Pair<>(
+                        "Score at least: " + blind.getTargetScore(),
+                        switch (blind.getType()) {
+                            case SMALL -> 3;
+                            case BIG -> 4;
+                            case BOSS -> 5;
+                        }
+                ));
+
+                int handsRemaining = blind.getHands().get();
+
+                if (blind.getHands().get() > 0) {
+                    cashBreakdown.add(new Pair<>(
+                            handsRemaining + " Remaining Hands ($1 each)",
+                            handsRemaining
+                    ));
+                }
+
+                int cashTotal = 0;
+
+                for (Pair<String, Integer> breakdown : cashBreakdown) {
+                    cashTotal += breakdown.getValue();
+                }
+
+                this.model.getCash().set(this.model.getCash().get() + cashTotal);
+                this.view.getContinuePane().setCashEntries(cashBreakdown);
+
+                this.view.getContinuePane().getShowTransition().play();
+            }
         });
 
         game.getDiscardButton().setOnMouseClicked(_ -> {
@@ -73,8 +129,15 @@ public class GameController {
             game.sortCards(SortMode.SUIT);
         });
 
-        this.view.getContinuePane().getContinueButton().setOnMouseClicked(_ -> {
-            // TODO -> Add round money
+        this.view.getShopPane().getNextRoundButton().setOnMouseClicked(_ -> {
+            this.view.getShopPane().getHideTransition().setOnFinished(_ -> {
+                Color color = this.model.getBlind().getType().getPrimaryColor();
+
+                this.view.getShopPane().updateHeader(color);
+                this.view.getContinuePane().setColor(color);
+            });
+
+            this.view.getShopPane().getHideTransition().play();
 
             if (this.model.getBlindType() == BlindType.BOSS) {
                 this.model.getAnte().set(this.model.getAnte().get() + 1);
@@ -82,16 +145,56 @@ public class GameController {
 
             this.model.getRound().set(this.model.getRound().get() + 1);
 
-            this.view.getContinuePane().hide();
             this.model.updateBlind();
             this.view.getGamePane().reset();
 
             initialize();
+
+            this.view.unlockMouseClicks();
         });
 
-//        this.view.getShopPane().getContinueButton().setOnMouseClicked(_ -> {
-//             TODO ->
-//        });
+        this.view.getContinuePane().getContinueButton().setOnMouseClicked(_ -> {
+            List<JokerCard> shopJokers = new ArrayList<>();
+
+            for (int i = 0; i < 4; i++) {
+                shopJokers.add(this.shopController.getRandomJoker());
+            }
+
+            List<CardView<JokerCard>> shopJokerViews = this.view.getShopPane().addCards(shopJokers);
+
+            for (CardView<JokerCard> view : shopJokerViews) {
+                tooltipManager.attach(view, view.getCard());
+
+                view.setOnMouseClicked(_ -> {
+                    JokerCard card = view.getCard();
+                    int cost = card.getType().getCost();
+                    int balance = this.model.getCash().get();
+
+                    if (balance < cost) return;
+                    this.model.getCash().set(balance - cost);
+
+                    this.view.getShopPane().removeCard(view);
+                    this.model.getJokers().add(card);
+//                    this.view.getGamePane().
+
+                    JokerCardView gameView = new JokerCardView(card);
+
+                    gameView.setOnMouseClicked(event -> {
+                        if (event.getButton() != MouseButton.SECONDARY) return;
+                        System.out.println("SOLD " + card.getType().getName());
+                        // TODO -> sell card
+                    });
+
+                    // TODO -> add joker to main pane
+                    this.view.getGamePane().getJokerArea().getChildren().add(gameView);
+                });
+            }
+
+            new SequentialTransition(
+                    this.view.getContinuePane().getHideTransition(),
+                    this.view.getShopPane().getShowTransition()
+            ).play();
+        });
 
     }
 
@@ -104,24 +207,24 @@ public class GameController {
 
     public void drawCardsToHand() {
         Blind blind = this.model.getBlind();
-        CardPane view = this.view.getGamePane();
+        GamePane view = this.view.getGamePane();
 
         List<PlayingCard> cards = blind.drawCards();
-        List<CardView> cardViews = view.addCards(cards);
+        List<PlayingCardView> playingCardViews = view.addCards(cards);
 
         view.sortCards(blind.getSortMode());
 
-        for (CardView cardView : cardViews) {
-            cardView.setOnMouseClicked(event -> {
-                PlayingCard card = cardView.getCard();
+        for (PlayingCardView playingCardView : playingCardViews) {
+            playingCardView.setOnMouseClicked(event -> {
+                PlayingCard card = playingCardView.getCard();
 
-                if (blind.getSelectedCards().size() == 5 && !cardView.isSelected()) {
+                if (blind.getSelectedCards().size() == 5 && !playingCardView.isSelected()) {
                     return;
                 }
 
-                cardView.toggleSelected();
+                playingCardView.toggleSelected();
 
-                if (cardView.isSelected()) {
+                if (playingCardView.isSelected()) {
                     this.model.getBlind().selectCard(card);
                 } else {
                     this.model.getBlind().deselectCard(card);

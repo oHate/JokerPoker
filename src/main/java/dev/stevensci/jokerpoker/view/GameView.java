@@ -1,8 +1,6 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.blind.HandType;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -15,21 +13,22 @@ public class GameView extends StackPane {
     private final DragManager dragManager;
 
     private ContinuePane continuePane = new ContinuePane();
+    private ShopPane shopPane = new ShopPane();
     private SidebarPane sidebarPane;
-    private CardPane gamePane;
+    private GamePane gamePane;
 
     public GameView(Stage stage) {
         this.layoutPane = new BorderPane();
 
-        this.gamePane = new CardPane();
+        this.gamePane = new GamePane();
         this.layoutPane.setCenter(this.gamePane);
 
         this.sidebarPane = new SidebarPane();
         this.layoutPane.setLeft(this.sidebarPane);
 
         this.overlayPane = new Pane();
-        this.overlayPane.setMouseTransparent(true);
-        this.overlayPane.getChildren().add(this.continuePane);
+        unlockMouseClicks();
+        this.overlayPane.getChildren().addAll(this.continuePane, this.shopPane);
 
         getChildren().addAll(this.layoutPane, this.overlayPane);
 
@@ -62,8 +61,8 @@ public class GameView extends StackPane {
         this.sidebarPane.getDiscardsLabel().setText(String.valueOf(discards));
     }
 
-    public void updateMoney(int money) {
-        this.sidebarPane.getMoneyLabel().setText("$" + money);
+    public void updateCash(int money) {
+        this.sidebarPane.getCashLabel().setText("$" + money);
     }
 
     public void updateAnte(int ante) {
@@ -74,6 +73,14 @@ public class GameView extends StackPane {
         this.sidebarPane.getRoundLabel().setText(String.valueOf(round));
     }
 
+    public void lockMouseClicks() {
+        this.overlayPane.setMouseTransparent(false);
+    }
+
+    public void unlockMouseClicks() {
+        this.overlayPane.setMouseTransparent(true);
+    }
+
     public Pane getOverlayPane() {
         return this.overlayPane;
     }
@@ -82,11 +89,15 @@ public class GameView extends StackPane {
         return this.continuePane;
     }
 
+    public ShopPane getShopPane() {
+        return this.shopPane;
+    }
+
     public SidebarPane getSidebarPane() {
         return this.sidebarPane;
     }
 
-    public CardPane getGamePane() {
+    public GamePane getGamePane() {
         return this.gamePane;
     }
 

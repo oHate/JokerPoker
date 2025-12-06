@@ -58,7 +58,7 @@ public class PlayingCard extends Card implements Comparable<PlayingCard> {
 
     @Override
     public Node createView() {
-        return Constant.CARD_SPRITESHEET.getView(this.rank.ordinal(), this.suit.ordinal());
+        return Constant.CARD_SPRITESHEET.getView(this.suit.ordinal(), this.rank.ordinal());
     }
 
 }

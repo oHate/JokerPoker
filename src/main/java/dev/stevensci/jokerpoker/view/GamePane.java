@@ -1,32 +1,33 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.util.Constant;
-import dev.stevensci.jokerpoker.util.SortMode;
 import dev.stevensci.jokerpoker.card.PlayingCard;
-import dev.stevensci.jokerpoker.card.joker.common.JimboJoker;
 import dev.stevensci.jokerpoker.elements.Label;
-import dev.stevensci.jokerpoker.elements.PixelatedBox;
 import dev.stevensci.jokerpoker.elements.PixelatedButton;
 import dev.stevensci.jokerpoker.elements.PixelatedContentBox;
+import dev.stevensci.jokerpoker.util.Constant;
+import dev.stevensci.jokerpoker.util.SortMode;
 import javafx.collections.FXCollections;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CardPane extends StackPane {
+public class GamePane extends StackPane {
 
     private final HBox cardArea;
+
+    private HBox jokerArea;
+    private Label jokerCountLabel;
 
     private PixelatedButton playHandButton;
     private PixelatedButton discardButton;
     private PixelatedButton sortRankButton;
     private PixelatedButton sortSuitButton;
 
-    public CardPane() {
+    public GamePane() {
         setPadding(Constant.PADDING_INSETS);
 
         BorderPane root = new BorderPane();
@@ -58,11 +59,11 @@ public class CardPane extends StackPane {
         this.cardArea.getChildren().clear();
     }
 
-    public List<CardView> addCards(List<PlayingCard> cards) {
-        List<CardView> views = new ArrayList<>();
+    public List<PlayingCardView> addCards(List<PlayingCard> cards) {
+        List<PlayingCardView> views = new ArrayList<>();
 
         for (PlayingCard card : cards) {
-            views.add(new CardView(card));
+            views.add(new PlayingCardView(card));
         }
 
         this.cardArea.getChildren().addAll(views);
@@ -72,15 +73,15 @@ public class CardPane extends StackPane {
 
     public void sortCards(SortMode mode) {
         FXCollections.sort(this.cardArea.getChildren(), (a, b) -> {
-            if (!(a instanceof CardView viewA) || (!(b instanceof CardView viewB))) return 0;
+            if (!(a instanceof PlayingCardView viewA) || (!(b instanceof PlayingCardView viewB))) return 0;
             return mode.getComparator().compare(viewA.getCard(), viewB.getCard());
         });
     }
 
     public void discard() {
         this.cardArea.getChildren().removeIf(node -> {
-            if (!(node instanceof CardView cardView)) return false;
-            return cardView.isSelected();
+            if (!(node instanceof PlayingCardView playingCardView)) return false;
+            return playingCardView.isSelected();
         });
     }
 
@@ -135,26 +136,26 @@ public class CardPane extends StackPane {
     }
 
     public Node getTopNode() {
-        GridPane layout = new GridPane(Constant.SPACING, Constant.SPACING);
+        VBox layout = new VBox(Constant.SPACING);
 
-        layout.getColumnConstraints().addAll(Constant.COL_100);
+        this.jokerArea = new HBox(Constant.SPACING);
+        this.jokerArea.setAlignment(Pos.CENTER);
 
-        HBox jokerBox = new HBox(Constant.SPACING);
-        jokerBox.setAlignment(Pos.CENTER);
-        jokerBox.getChildren().addAll(
-                new JokerCardView(new JimboJoker())
-        );
+        this.jokerCountLabel = new Label("0/5", Color.WHITE, Constant.GRAY.darker());
 
-        layout.addRow(0, new PixelatedContentBox(Constant.GRAY, jokerBox)); // new PixelatedBox(Constant.GRAY)
-
-        Label jokerCount = new Label("0/5", Color.WHITE, Constant.GRAY.darker());
-//        Label consumableCount = new Label("0/2", Color.WHITE, Constant.GRAY.darker());
-//        layout.addRow(1, jokerCount, consumableCount);
-
-        GridPane.setHalignment(jokerCount, HPos.LEFT);
-//        GridPane.setHalignment(consumableCount, HPos.RIGHT);
+        layout.getChildren().addAll(new PixelatedContentBox(Constant.GRAY, this.jokerArea) {{
+            setMinHeight(128);
+        }}, this.jokerCountLabel);
 
         return layout;
+    }
+
+    public HBox getJokerArea() {
+        return this.jokerArea;
+    }
+
+    public Label getJokerCountLabel() {
+        return this.jokerCountLabel;
     }
 
     public HBox getCardArea() {

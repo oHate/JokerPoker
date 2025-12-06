@@ -16,9 +16,9 @@ public class SpriteSheet {
         this.spriteHeight = spriteHeight;
     }
 
-    public ImageView getView(int x, int y) {
+    public ImageView getView(int row, int col) {
         ImageView view = new ImageView(this.spriteSheet);
-        view.setViewport(new Rectangle2D(x * this.spriteWidth, y * this.spriteHeight, this.spriteWidth, this.spriteHeight));
+        view.setViewport(new Rectangle2D(col * this.spriteWidth, row * this.spriteHeight, this.spriteWidth, this.spriteHeight));
         view.setSmooth(false);
         return view;
     }
