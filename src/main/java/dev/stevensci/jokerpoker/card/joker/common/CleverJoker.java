@@ -14,7 +14,7 @@ public class CleverJoker extends JokerCard {
     public void onPostHandScore(Blind blind) {
         // Check to see if all selected cards are is a Handtype pair
         // Needs to add sub hand types for logic to work properly
-        if (blind.getResult().getHandType() == HandType.TWO_PAIR    ) {
+        if (blind.getResult().getHandType() == HandType.TWO_PAIR) {
 
             blind.addHandChips(80);
 
