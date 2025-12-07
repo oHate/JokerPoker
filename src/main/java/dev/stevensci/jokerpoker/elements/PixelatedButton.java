@@ -6,20 +6,23 @@ import javafx.scene.shape.Rectangle;
 public class PixelatedButton extends PixelatedContentBox {
 
     private final Label label;
+    private final Color color;
     private final Color pressColor;
 
     public PixelatedButton(Label label, Color color) {
         super(color);
 
         this.label = label;
+
+        this.color = color;
         this.pressColor = color.deriveColor(0, 1, 0.85, 1);
 
         getLayout().getChildren().add(this.label);
         setupEventHandlers();
     }
     private void setupEventHandlers() {
-        setOnMouseEntered(e -> setRectanglesColor(this.pressColor));
-        setOnMouseExited(e -> setRectanglesColor(getColor()));
+        setOnMouseEntered(e -> setColor(this.pressColor));
+        setOnMouseExited(e -> setColor(this.color));
 
         setOnMousePressed(e -> {
             for (Rectangle rectangle : getRectangles()) {
@@ -36,20 +39,17 @@ public class PixelatedButton extends PixelatedContentBox {
             for (Rectangle rectangle : getRectangles()) {
                 rectangle.setTranslateX(0);
                 rectangle.setTranslateY(0);
-                rectangle.setFill(getColor());
+                rectangle.setFill(this.color);
             }
 
             this.label.setTranslateX(0);
             this.label.setTranslateY(0);
 
-            setRectanglesColor(isHover() ? this.pressColor : getColor());
+            setColor(isHover() ? this.pressColor : this.color);
         });
     }
 
-    private void setRectanglesColor(Color color) {
-        for (Rectangle rectangle : getRectangles()) {
-            rectangle.setFill(color);
-        }
+    public Label getLabel() {
+        return this.label;
     }
-
 }

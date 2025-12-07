@@ -1,23 +1,19 @@
 package dev.stevensci.jokerpoker.card.joker.common;
-import dev.stevensci.jokerpoker.blind.Blind;
-import dev.stevensci.jokerpoker.blind.HandType;
-import dev.stevensci.jokerpoker.card.joker.JokerCard;
 
+import dev.stevensci.jokerpoker.blind.Blind;
+import dev.stevensci.jokerpoker.card.joker.JokerCard;
+import dev.stevensci.jokerpoker.card.joker.JokerType;
 
 public class DrollJoker extends JokerCard {
 
     public DrollJoker() {
-        super(0, 0);
+        super(JokerType.DROLL);
     }
 
     @Override
     public void onPostHandScore(Blind blind) {
-        // Check to see if all selected cards are is a Handtype pair
-        // Needs to add sub hand types for logic to work properly
-        if (blind.getResult().getHandType() == HandType.FLUSH) {
-
+        if (blind.getResult().getHandType().isFlush()) {
             blind.addHandMultiplier(10);
-
         }
     }
 

@@ -8,8 +8,6 @@ public class JokerCardView extends StackPane implements Draggable {
     private final JokerCard jokerCard;
     private final Node view;
 
-    private boolean selected;
-
     public JokerCardView(JokerCard jokerCard) {
         this.jokerCard = jokerCard;
         this.view = jokerCard.createView();
@@ -24,11 +22,5 @@ public class JokerCardView extends StackPane implements Draggable {
     public Node getView() {
         return this.view;
     }
-
-    public boolean isSelected() {
-        return this.selected;
-    }
-
-    
 
 }

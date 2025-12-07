@@ -11,23 +11,21 @@ public class PixelatedBox extends StackPane {
     public static final int SHADOW_OFFSET_X = 4;
     public static final int SIZE = 2;
 
-    private final Color color;
-    private final Color shadowColor;
+    private Color color;
 
     private final Rectangle[] rectangles = new Rectangle[4];
     private final Rectangle[] shadowRectangles = new Rectangle[4];
 
     public PixelatedBox(Color color) {
-        this.color = color;
-        this.shadowColor = color.darker();
-
         setPadding(Constant.PADDING_INSETS);
 
-        initRectangles(this.rectangles, this.color);
-        initRectangles(this.shadowRectangles, this.shadowColor);
+        initRectangles(this.rectangles);
+        initRectangles(this.shadowRectangles);
 
         getChildren().addAll(this.shadowRectangles);
         getChildren().addAll(this.rectangles);
+
+        setColor(color);
 
         for (Rectangle rectangle : this.shadowRectangles) {
             rectangle.setTranslateX(SHADOW_OFFSET_X);
@@ -35,18 +33,17 @@ public class PixelatedBox extends StackPane {
         }
     }
 
-    private void initRectangles(Rectangle[] rectangles, Color fill) {
-        rectangles[0] = createRectangle(0, 4 * SIZE, fill);
-        rectangles[1] = createRectangle(SIZE, 2 * SIZE, fill);
-        rectangles[2] = createRectangle(2 * SIZE, SIZE, fill);
-        rectangles[3] = createRectangle(4 * SIZE, 0, fill);
+    private void initRectangles(Rectangle[] rectangles) {
+        rectangles[0] = createRectangle(0, 4 * SIZE);
+        rectangles[1] = createRectangle(SIZE, 2 * SIZE);
+        rectangles[2] = createRectangle(2 * SIZE, SIZE);
+        rectangles[3] = createRectangle(4 * SIZE, 0);
     }
 
-    private Rectangle createRectangle(double x, double y, Color fill) {
+    private Rectangle createRectangle(double x, double y) {
         Rectangle rectangle = new Rectangle();
         rectangle.setX(x);
         rectangle.setY(y);
-        rectangle.setFill(fill);
         rectangle.setManaged(false);
         return rectangle;
     }
@@ -65,12 +62,14 @@ public class PixelatedBox extends StackPane {
         rectangles[3].setHeight(height);
     }
 
-    public Color getColor() {
-        return this.color;
-    }
+    public void setColor(Color color) {
+        for (Rectangle rectangle : this.rectangles) {
+            rectangle.setFill(color);
+        }
 
-    public Color getShadowColor() {
-        return this.shadowColor;
+        for (Rectangle rectangle : this.shadowRectangles) {
+            rectangle.setFill(color.darker());
+        }
     }
 
     public Rectangle[] getRectangles() {

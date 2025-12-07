@@ -80,9 +80,20 @@ public class Blind {
         this.handChips = type.getChips();
         this.handMultiplier = type.getMultiplier();
 
+        for (JokerCard joker : this.jokers) {
+            joker.onPreHandScore(this);
+        }
+
         for (PlayingCard card : this.selectedCards) {
             this.handChips += card.getRank().getChips();
-            card.triggerCardEdition(this);
+
+            for (JokerCard joker : this.jokers) {
+                joker.onCardScore(this, card);
+            }
+        }
+
+        for (JokerCard joker : this.jokers) {
+            joker.onPostHandScore(this);
         }
 
         this.score.set(this.score.get() + this.handChips * this.handMultiplier);
@@ -108,16 +119,16 @@ public class Blind {
         sortCards();
     }
 
+    public BlindType getType() {
+        return this.type;
+    }
+
     public long getTargetScore() {
         return this.targetScore;
     }
 
     public Stack<PlayingCard> getDeck() {
         return this.deck;
-    }
-
-    public List<JokerCard> getJokers() {
-        return this.jokers;
     }
 
     public List<PlayingCard> getHand() {

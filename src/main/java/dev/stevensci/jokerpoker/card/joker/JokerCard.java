@@ -9,17 +9,15 @@ import javafx.scene.Node;
 
 public abstract class JokerCard extends Card {
 
-    private final int spriteRow;
-    private final int spriteCol;
+    private final JokerType type;
 
-    public JokerCard(int spriteRow, int spriteCol, CardEdition edition) {
+    public JokerCard(JokerType type, CardEdition edition) {
         super(edition);
-        this.spriteRow = spriteRow;
-        this.spriteCol = spriteCol;
+        this.type = type;
     }
 
-    public JokerCard(int spriteRow, int spriteCol) {
-        this(spriteRow, spriteCol, CardEdition.BASE);
+    public JokerCard(JokerType type) {
+        this(type, CardEdition.BASE);
     }
 
     public void onPreHandScore(Blind blind) {
@@ -30,17 +28,17 @@ public abstract class JokerCard extends Card {
 
     }
 
-    public void onHandEffect(Blind blind, PlayingCard card) {
-
-    }
-
     public void onPostHandScore(Blind blind) {
 
     }
 
     @Override
     public Node createView() {
-        return Constant.JOKERS_SPRITESHEET.getView(this.spriteRow, this.spriteCol);
+        return Constant.JOKERS_SPRITESHEET.getView(this.type.getSpriteRow(), this.type.getSpriteColumn());
+    }
+
+    public JokerType getType() {
+        return this.type;
     }
 
 }
