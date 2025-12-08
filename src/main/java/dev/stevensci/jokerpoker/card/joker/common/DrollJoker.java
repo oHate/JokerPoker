@@ -1,19 +1,19 @@
 package dev.stevensci.jokerpoker.card.joker.common;
 
-import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.card.joker.JokerType;
+import dev.stevensci.jokerpoker.model.GameModel;
 
 public class DrollJoker extends JokerCard {
 
     public DrollJoker() {
-        super(JokerType.DROLL);
+        super(JokerType.DROLL_JOKER);
     }
 
     @Override
-    public void onPostHandScore(Blind blind) {
-        if (blind.getResult().getHandType().isFlush()) {
-            blind.addHandMultiplier(10);
+    public void onPostHandScore(GameModel game) {
+        if (game.getResult().getHandType().isFlush()) {
+            game.addResultMultiplier(10);
         }
     }
 

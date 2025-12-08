@@ -28,6 +28,7 @@ public class Constant {
     public static final Image BACKGROUND_IMAGE;
     public static final SpriteSheet CARD_SPRITESHEET;
     public static final SpriteSheet JOKERS_SPRITESHEET;
+    public static final Font FONT_64;
     public static final Font FONT_32;
     public static final Font FONT_24;
 
@@ -48,6 +49,7 @@ public class Constant {
 
         BACKGROUND_IMAGE = new Image(Constant.class.getResourceAsStream("/images/pokertable.jpg"));
 
+        FONT_64 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 64);
         FONT_32 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 32);
         FONT_24 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 24);
     }
@@ -74,7 +76,7 @@ public class Constant {
 
     public static final long[] SCORE_ARRAY = {
             100,
-            1, // 300
+            1,
             800,
             2_000,
             5_000,

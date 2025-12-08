@@ -1,34 +1,28 @@
 package dev.stevensci.jokerpoker.card.joker;
 
+import dev.stevensci.jokerpoker.model.GameModel;
 import dev.stevensci.jokerpoker.util.Constant;
-import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.Card;
 import dev.stevensci.jokerpoker.card.PlayingCard;
-import dev.stevensci.jokerpoker.card.meta.CardEdition;
 import javafx.scene.Node;
 
 public abstract class JokerCard extends Card {
 
     private final JokerType type;
 
-    public JokerCard(JokerType type, CardEdition edition) {
-        super(edition);
+    public JokerCard(JokerType type) {
         this.type = type;
     }
 
-    public JokerCard(JokerType type) {
-        this(type, CardEdition.BASE);
-    }
-
-    public void onPreHandScore(Blind blind) {
+    public void onPreHandScore(GameModel game) {
 
     }
 
-    public void onCardScore(Blind blind, PlayingCard card) {
+    public void onCardScore(GameModel game, PlayingCard card) {
 
     }
 
-    public void onPostHandScore(Blind blind) {
+    public void onPostHandScore(GameModel game) {
 
     }
 

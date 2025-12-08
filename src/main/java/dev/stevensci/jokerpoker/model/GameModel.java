@@ -1,61 +1,167 @@
 package dev.stevensci.jokerpoker.model;
 
-import dev.stevensci.jokerpoker.util.Constant;
-import dev.stevensci.jokerpoker.blind.Blind;
-import dev.stevensci.jokerpoker.blind.BlindType;
 import dev.stevensci.jokerpoker.card.PlayingCard;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
-import dev.stevensci.jokerpoker.card.meta.CardRank;
-import dev.stevensci.jokerpoker.card.meta.CardSuit;
+import dev.stevensci.jokerpoker.card.CardRank;
+import dev.stevensci.jokerpoker.card.CardSuit;
+import dev.stevensci.jokerpoker.util.Constant;
+import dev.stevensci.jokerpoker.util.SortMode;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GameModel {
 
+    public static final int REROLL_COST_STEP = 2;
+    public static final int DEFAULT_REROLL_COST = 5;
     public static final int DEFAULT_HANDS = 4;
     public static final int DEFAULT_DISCARDS = 3;
     public static final int DEFAULT_HAND_SIZE = 8;
     public static final int DEFAULT_JOKER_SIZE = 5;
     public static final int DEFAULT_CONSUMABLE_SIZE = 2;
 
-    private final List<PlayingCard> deck = new ArrayList<>(52);
+    private final List<PlayingCard> gameDeck = new ArrayList<>(52);
+
+    private final Stack<PlayingCard> roundDeck = new Stack<>();
+    private final List<PlayingCard> cardsInHand = new ArrayList<>();
+    private final List<PlayingCard> selectedCards = new ArrayList<>();
+
     private final List<JokerCard> jokers = new ArrayList<>();
 
-    private int hands = DEFAULT_HANDS;
-    private int discards = DEFAULT_DISCARDS;
-    private int baseHandSize = DEFAULT_HAND_SIZE;
+    private int handsAmount = DEFAULT_HANDS;
+    private int discardsAmount = DEFAULT_DISCARDS;
+//    private int baseHandSize = DEFAULT_HAND_SIZE;
+
+    private IntegerProperty score = new SimpleIntegerProperty(0);
+    private IntegerProperty hands = new SimpleIntegerProperty(4);
+    private IntegerProperty discards = new SimpleIntegerProperty(3);
+
     private IntegerProperty round = new SimpleIntegerProperty(1);
     private IntegerProperty ante = new SimpleIntegerProperty(1);
     private IntegerProperty cash = new SimpleIntegerProperty(0);
+    private IntegerProperty rerollCost = new SimpleIntegerProperty(5);
 
-    private Blind blind;
+    private SortMode sortMode = SortMode.NONE;
+
+    private HandResult result;
+    private IntegerProperty resultChips = new SimpleIntegerProperty(0);
+    private IntegerProperty resultMultiplier = new SimpleIntegerProperty(0);
+
+//        private final Stack<PlayingCard> deck;
+//    private final List<JokerCard> jokers;
+//    private List<PlayingCard> hand = new ArrayList<>();
+//    private List<PlayingCard> selectedCards;
+//    private final HandResult result;
+//
+//    private BlindType type;
+//    private long targetScore;
+//    private SortMode sortMode = SortMode.NONE;
+//
+//    private LongProperty score = new SimpleLongProperty();
+//    private IntegerProperty hands = new SimpleIntegerProperty();
+//    private IntegerProperty discards = new SimpleIntegerProperty();
+//    private int handSize;
+//
+//    private int handChips;
+//    private int handMultiplier;
+
 
     public GameModel() {
-        initializeDeck();
-        updateBlind();
-    }
+        this.result = new HandResult(this.selectedCards);
 
-    public void updateBlind() {
-        this.blind = new Blind(
-                getBlindType(),
-                this.deck,
-                this.jokers,
-                getTargetScore(),
-                this.hands,
-                this.discards,
-                this.baseHandSize
-        );
-    }
+        this.result.getHandTypeProperty().addListener(_ -> {
+            HandType type = this.result.getHandTypeProperty().get();
+            this.resultChips.set(type.getChips());
+            this.resultMultiplier.set(type.getMultiplier());
+        });
 
-    private void initializeDeck() {
         for (CardSuit suit : CardSuit.values()) {
             for (CardRank rank : CardRank.values()) {
-                this.deck.add(new PlayingCard(rank, suit));
+                this.gameDeck.add(new PlayingCard(rank, suit));
             }
         }
+
+        initialize();
+    }
+
+    public void initialize() {
+        this.score.set(0);
+        this.hands.set(this.handsAmount);
+        this.discards.set(this.discardsAmount);
+
+        this.roundDeck.clear();
+        this.selectedCards.clear();
+        this.cardsInHand.clear();
+
+        this.roundDeck.addAll(this.gameDeck);
+        Collections.shuffle(this.roundDeck);
+
+//        this.sortMode = SortMode.NONE;
+    }
+
+    public List<PlayingCard> drawCards() {
+        List<PlayingCard> cards = new ArrayList<>();
+
+        int cardsNeeded = Math.min(this.roundDeck.size(), DEFAULT_HAND_SIZE - this.cardsInHand.size());
+
+        for (int i = 0; i < cardsNeeded; i++) {
+            PlayingCard card = this.roundDeck.pop();
+            this.cardsInHand.add(card);
+            cards.add(card);
+        }
+
+        sortCards();
+        return cards;
+    }
+
+    public void selectCard(PlayingCard card) {
+        this.selectedCards.add(card);
+        this.selectedCards.sort(Comparator.comparingInt(this.cardsInHand::indexOf));
+        this.result.updateHandType();
+    }
+
+    public void deselectCard(PlayingCard card) {
+        this.selectedCards.remove(card);
+        this.result.updateHandType();
+    }
+
+    public void startHand() {
+        HandType type = this.result.getHandType();
+
+//        this.resultChips = type.getChips();
+//        this.handMultiplier = type.getMultiplier();
+
+        for (JokerCard joker : this.jokers) {
+            joker.onPreHandScore(this);
+        }
+    }
+
+    public void scoreCard(PlayingCard card) {
+        this.resultChips.set(this.resultChips.get() + card.getRank().getChips());
+
+        for (JokerCard joker : this.jokers) {
+            joker.onCardScore(this, card);
+        }
+    }
+
+    public void finishHand() {
+        for (JokerCard joker : this.jokers) {
+            joker.onPostHandScore(this);
+        }
+
+        this.score.set(this.score.get() + this.resultChips.get() * this.resultMultiplier.get());
+
+        discard();
+    }
+
+    public void discard() {
+        this.cardsInHand.removeAll(this.selectedCards);
+        this.selectedCards.clear();
+    }
+
+    private void sortCards() {
+        this.cardsInHand.sort(this.sortMode.getComparator());
     }
 
     public long getTargetScore() {
@@ -66,28 +172,113 @@ public class GameModel {
         return BlindType.values()[(this.round.get() - 1) % 3];
     }
 
-    public IntegerProperty getCash() {
-        return this.cash;
+    public Stack<PlayingCard> getRoundDeck() {
+        return this.roundDeck;
+    }
+
+    public List<PlayingCard> getCardsInHand() {
+        return this.cardsInHand;
+    }
+
+    public List<PlayingCard> getSelectedCards() {
+        return this.selectedCards;
+    }
+
+    public IntegerProperty getScore() {
+        return this.score;
+    }
+
+    public IntegerProperty getHands() {
+        return this.hands;
+    }
+
+    public void decrementHands() {
+        this.hands.set(this.hands.get() - 1);
+    }
+
+    public IntegerProperty getDiscards() {
+        return this.discards;
+    }
+
+    public void decrementDiscards() {
+        this.discards.set(this.discards.get() - 1);
     }
 
     public IntegerProperty getRound() {
         return this.round;
     }
 
+    public void incrementRound() {
+        this.round.set(this.round.get() + 1);
+    }
+
     public IntegerProperty getAnte() {
         return this.ante;
     }
 
-    public List<PlayingCard> getDeck() {
-        return this.deck;
+    public void incrementAnte() {
+        this.ante.set(this.ante.get() + 1);
     }
+
+    public IntegerProperty getCash() {
+        return this.cash;
+    }
+
+    public void addCash(int amount) {
+        this.cash.set(this.cash.get() + amount);
+    }
+
+    public void subtractCash(int amount) {
+        this.cash.set(this.cash.get() - amount);
+    }
+
+    public IntegerProperty getRerollCost() {
+        return this.rerollCost;
+    }
+
+    public void increaseRerollCost() {
+        this.rerollCost.set(this.rerollCost.get() + REROLL_COST_STEP);
+    }
+
+//    public List<PlayingCard> getGameDeck() {
+//        return this.gameDeck;
+//    }
 
     public List<JokerCard> getJokers() {
         return this.jokers;
     }
 
-    public Blind getBlind() {
-        return this.blind;
+    public SortMode getSortMode() {
+        return this.sortMode;
+    }
+
+    public void setSortMode(SortMode sortMode) {
+        this.sortMode = sortMode;
+        sortCards(); // TODO -> bind with object property
+    }
+
+    public HandResult getResult() {
+        return this.result;
+    }
+
+    public IntegerProperty getResultChips() {
+        return this.resultChips;
+    }
+
+    public void addResultChips(int amount) {
+        this.resultChips.set(this.resultChips.get() + amount);
+    }
+
+    public IntegerProperty getResultMultiplier() {
+        return this.resultMultiplier;
+    }
+
+    public void addResultMultiplier(int amount) {
+        this.resultMultiplier.set(this.resultMultiplier.get() + amount);
+    }
+
+    public void multiplyResultMultiplier(float amount) {
+        this.resultMultiplier.set((int) (this.resultMultiplier.get() * amount));
     }
 
 }

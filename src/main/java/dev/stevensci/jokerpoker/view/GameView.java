@@ -1,6 +1,8 @@
 package dev.stevensci.jokerpoker.view;
 
-import dev.stevensci.jokerpoker.blind.HandType;
+import dev.stevensci.jokerpoker.model.HandType;
+import dev.stevensci.jokerpoker.view.manager.DragManager;
+import dev.stevensci.jokerpoker.view.pane.*;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -14,6 +16,7 @@ public class GameView extends StackPane {
 
     private ContinuePane continuePane = new ContinuePane();
     private ShopPane shopPane = new ShopPane();
+    private GameOverPane gameOverPane = new GameOverPane();
     private SidebarPane sidebarPane;
     private GamePane gamePane;
 
@@ -28,7 +31,7 @@ public class GameView extends StackPane {
 
         this.overlayPane = new Pane();
         unlockMouseClicks();
-        this.overlayPane.getChildren().addAll(this.continuePane, this.shopPane);
+        this.overlayPane.getChildren().addAll(this.continuePane, this.shopPane, this.gameOverPane);
 
         getChildren().addAll(this.layoutPane, this.overlayPane);
 
@@ -91,6 +94,10 @@ public class GameView extends StackPane {
 
     public ShopPane getShopPane() {
         return this.shopPane;
+    }
+
+    public GameOverPane getGameOverPane() {
+        return this.gameOverPane;
     }
 
     public SidebarPane getSidebarPane() {
