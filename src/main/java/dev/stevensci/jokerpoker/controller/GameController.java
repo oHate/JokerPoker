@@ -52,10 +52,6 @@ public class GameController {
     }
 
     public void initialize() {
-//        Blind blind = this.model.getBlind();
-
-        drawCardsToHand();
-
         IntegerProperty rerollCost = this.model.getRerollCost();
         PixelatedButton rerollButton = this.view.getShopPane().getRerollButton();
         rerollCost.addListener(_ -> rerollButton.getLabel().setText("Reroll $" + rerollCost.get()));
@@ -64,29 +60,28 @@ public class GameController {
         result.getHandTypeProperty().addListener(_ -> this.view.updateHandType(result.getHandType()));
 
         // TODO -> store curren blind type and bind it to a objectproperty
-        this.view.getSidebarPane().updateSidebar(this.model.getBlindType(), this.model.getTargetScore());
+        this.model.getBlindType().addListener(_ -> {
+            BlindType type = this.model.getBlindType().get();
 
-        // Discards
-        this.view.updateDiscards(this.model.getDiscards().get());
+            this.view.getSidebarPane().updateSidebar(type, this.model.getTargetScore());
+
+            this.view.getShopPane().getHideTransition().setOnFinished(_ -> {
+                Color color = type.getPrimaryColor();
+
+                this.view.getShopPane().updateHeader(color);
+                this.view.getContinuePane().setColor(color);
+            });
+        });
+
         this.model.getDiscards().addListener(_ -> this.view.updateDiscards(this.model.getDiscards().get()));
 
-        // Hands
-        this.view.updateHands(this.model.getHands().get());
         this.model.getHands().addListener(_ -> this.view.updateHands(this.model.getHands().get()));
 
-        // Score
-        this.view.updateScore(0);
         this.model.getScore().addListener(_ -> this.view.updateScore(this.model.getScore().get()));
 
-        // Chips
-        this.model.getResultChips().addListener(_ -> {
-            this.view.getSidebarPane().getChipsLabel().setText(String.valueOf(this.model.getResultChips().get()));
-        });
+        this.model.getResultChips().addListener(_ -> this.view.getSidebarPane().getChipsLabel().setText(String.valueOf(this.model.getResultChips().get())));
 
-        // Mult
-        this.model.getResultMultiplier().addListener(_ -> {
-            this.view.getSidebarPane().getMultLabel().setText(String.valueOf(this.model.getResultMultiplier().get()));
-        });
+        this.model.getResultMultiplier().addListener(_ -> this.view.getSidebarPane().getMultLabel().setText(String.valueOf(this.model.getResultMultiplier().get())));
 
         setupPlayHandButton();
         setupDiscardButton();
@@ -97,6 +92,9 @@ public class GameController {
         setupNextRoundButton();
         setupContinueButton();
         setupRerollButton();
+
+        this.model.initialize();
+        drawCardsToHand();
     }
 
     private void setupPlayHandButton() {
@@ -106,17 +104,16 @@ public class GameController {
             if (this.model.getHands().get() <= 0 || this.model.getResult().getHandType() == HandType.NONE) return;
 
             this.view.lockMouseClicks();
-
             this.model.decrementHands();
 
             this.model.getJokers().clear();
-            this.view.getGamePane().getJokerArea().getChildren().forEach(node -> { // TODO -> IMPROVE THIS
+            this.view.getGamePane().getJokerArea().getChildren().forEach(node -> {
                 if (node instanceof JokerCardNode view) {
                     this.model.getJokers().add(view.getCard());
                 }
             });
 
-            // TODO -> track internally
+            // TODO -> Should be tracked internally
             Map<PlayingCard, PlayingCardNode> map =
                     this.view.getGamePane().getCardArea().getChildren().stream()
                             .filter(node -> node instanceof PlayingCardNode)
@@ -126,15 +123,16 @@ public class GameController {
                                     Function.identity()
                             ));
 
-            List<PlayingCard> cardsToScore = new ArrayList<>(this.model.getSelectedCards());
-
             this.model.startHand();
 
             SequentialTransition sequence = new SequentialTransition();
 
             Pane overlay = this.view.getOverlayPane();
 
-            for (PlayingCard card : cardsToScore) {
+            for (int i = 0; i < this.model.getSelectedCards().size(); i++) {
+                if (this.model.getResult().getSkippedIndexes().contains(i)) continue;
+
+                PlayingCard card = this.model.getSelectedCards().get(i);
                 PlayingCardNode node = map.get(card);
                 if (node == null) continue;
 
@@ -143,13 +141,7 @@ public class GameController {
                         AnimationUtil.buildPopupDiamondAnimation(overlay, node, "+" + card.getRank().getChips())
                 );
 
-                cardAnimation.setOnFinished(_ -> {
-                    this.model.scoreCard(card);
-
-//                    this.view.getSidebarPane().getChipsLabel().setText(String.valueOf(blind.getHandChips()));
-//                    this.view.getSidebarPane().getMultLabel().setText(String.valueOf(blind.getHandMultiplier()));
-                });
-
+                cardAnimation.setOnFinished(_ -> this.model.scoreCard(card));
                 sequence.getChildren().add(cardAnimation);
             }
 
@@ -165,7 +157,7 @@ public class GameController {
 
                     cashBreakdown.add(new Pair<>(
                             "Score at least: " + this.model.getTargetScore(),
-                            switch (this.model.getBlindType()) {
+                            switch (this.model.getBlindType().get()) {
                                 case SMALL -> 3;
                                 case BIG -> 4;
                                 case BOSS -> 5;
@@ -224,31 +216,19 @@ public class GameController {
     }
 
     private void setupNextRoundButton() {
-        BlindType type = this.model.getBlindType();
         ShopPane shopPane = this.view.getShopPane();
-        ContinuePane continuePane = this.view.getContinuePane();
-
-        shopPane.getHideTransition().setOnFinished(_ -> {
-            Color color = type.getPrimaryColor();
-
-            shopPane.updateHeader(color);
-            continuePane.setColor(color);
-        });
 
         shopPane.getNextRoundButton().setOnMouseClicked(_ -> {
             shopPane.getHideTransition().play();
 
-            if (type == BlindType.BOSS) {
+            if (this.model.getBlindType().get() == BlindType.BOSS) {
                 this.model.incrementAnte();
             }
 
             this.model.getRerollCost().set(GameModel.DEFAULT_REROLL_COST);
             this.model.incrementRound();
-//            this.model.updateBlind();
             this.view.getGamePane().getCardArea().getChildren().clear();
 
-            // TODO NEXT ROUND CODE
-//            initialize();
             this.model.initialize();
             drawCardsToHand();
 
@@ -287,7 +267,7 @@ public class GameController {
             this.tooltipManager.attach(node, node.getCard());
 
             node.setOnMouseClicked(_ -> {
-                if (this.model.getJokers().size() >= 5) return;
+                if (this.model.getJokers().size() >= GameModel.DEFAULT_JOKER_SIZE) return;
 
                 JokerCard card = node.getCard();
                 int cost = card.getType().getCost();
@@ -309,10 +289,8 @@ public class GameController {
                     this.model.getCash().set(this.model.getCash().get() + (cost / 2));
                     this.model.getJokers().remove(card);
                     this.view.getGamePane().getJokerCountLabel().setText(this.model.getJokers().size() + "/5");
-                    // TODO -> sell card
                 });
 
-                // TODO -> add joker to main pane
                 this.view.getGamePane().getJokerArea().getChildren().add(gameView);
                 this.view.getGamePane().getJokerCountLabel().setText(this.model.getJokers().size() + "/5");
             });
@@ -321,16 +299,12 @@ public class GameController {
 
     private void setupRerollButton() {
         PixelatedButton rerollButton = this.view.getShopPane().getRerollButton();
-        IntegerProperty rerollCost = this.model.getRerollCost();
-        IntegerProperty cash = this.model.getCash();
 
         rerollButton.setOnMouseClicked(_ -> {
-            if (cash.get() < rerollCost.get()) return;
+            if (this.model.getCash().get() < this.model.getRerollCost().get()) return;
 
-            cash.set(cash.get() - rerollCost.get());
-            rerollCost.set(rerollCost.get() + 2);
-
-//            rerollButton.getLabel().setText("Reroll $" + rerollCost.get());
+            this.model.subtractCash(this.model.getRerollCost().get());
+            this.model.increaseRerollCost();
 
             setupShopJokers();
         });
@@ -339,8 +313,7 @@ public class GameController {
     public void discard() {
         this.model.discard();
         this.view.getGamePane().discard();
-        this.model.getResult().updateHandType(); // TODO -> unneeded?
-//        this.model.getBlind().getResult().updateHandType();
+        this.model.getResult().updateHandType();
         drawCardsToHand();
     }
 

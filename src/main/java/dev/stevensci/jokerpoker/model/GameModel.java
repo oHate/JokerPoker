@@ -7,19 +7,20 @@ import dev.stevensci.jokerpoker.card.CardSuit;
 import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.util.SortMode;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.*;
 
 public class GameModel {
 
     public static final int REROLL_COST_STEP = 2;
-    public static final int DEFAULT_REROLL_COST = 5;
+    public static final int DEFAULT_REROLL_COST = 3;
     public static final int DEFAULT_HANDS = 4;
     public static final int DEFAULT_DISCARDS = 3;
     public static final int DEFAULT_HAND_SIZE = 8;
     public static final int DEFAULT_JOKER_SIZE = 5;
-    public static final int DEFAULT_CONSUMABLE_SIZE = 2;
 
     private final List<PlayingCard> gameDeck = new ArrayList<>(52);
 
@@ -31,11 +32,10 @@ public class GameModel {
 
     private int handsAmount = DEFAULT_HANDS;
     private int discardsAmount = DEFAULT_DISCARDS;
-//    private int baseHandSize = DEFAULT_HAND_SIZE;
 
-    private IntegerProperty score = new SimpleIntegerProperty(0);
-    private IntegerProperty hands = new SimpleIntegerProperty(4);
-    private IntegerProperty discards = new SimpleIntegerProperty(3);
+    private IntegerProperty score = new SimpleIntegerProperty(-1);
+    private IntegerProperty hands = new SimpleIntegerProperty(-1);
+    private IntegerProperty discards = new SimpleIntegerProperty(-1);
 
     private IntegerProperty round = new SimpleIntegerProperty(1);
     private IntegerProperty ante = new SimpleIntegerProperty(1);
@@ -43,29 +43,11 @@ public class GameModel {
     private IntegerProperty rerollCost = new SimpleIntegerProperty(5);
 
     private SortMode sortMode = SortMode.NONE;
+    private ObjectProperty<BlindType> blindType = new SimpleObjectProperty<>();
 
     private HandResult result;
     private IntegerProperty resultChips = new SimpleIntegerProperty(0);
     private IntegerProperty resultMultiplier = new SimpleIntegerProperty(0);
-
-//        private final Stack<PlayingCard> deck;
-//    private final List<JokerCard> jokers;
-//    private List<PlayingCard> hand = new ArrayList<>();
-//    private List<PlayingCard> selectedCards;
-//    private final HandResult result;
-//
-//    private BlindType type;
-//    private long targetScore;
-//    private SortMode sortMode = SortMode.NONE;
-//
-//    private LongProperty score = new SimpleLongProperty();
-//    private IntegerProperty hands = new SimpleIntegerProperty();
-//    private IntegerProperty discards = new SimpleIntegerProperty();
-//    private int handSize;
-//
-//    private int handChips;
-//    private int handMultiplier;
-
 
     public GameModel() {
         this.result = new HandResult(this.selectedCards);
@@ -81,8 +63,6 @@ public class GameModel {
                 this.gameDeck.add(new PlayingCard(rank, suit));
             }
         }
-
-        initialize();
     }
 
     public void initialize() {
@@ -97,7 +77,7 @@ public class GameModel {
         this.roundDeck.addAll(this.gameDeck);
         Collections.shuffle(this.roundDeck);
 
-//        this.sortMode = SortMode.NONE;
+        this.blindType.set(BlindType.values()[(this.round.get() - 1) % 3]);
     }
 
     public List<PlayingCard> drawCards() {
@@ -127,11 +107,6 @@ public class GameModel {
     }
 
     public void startHand() {
-        HandType type = this.result.getHandType();
-
-//        this.resultChips = type.getChips();
-//        this.handMultiplier = type.getMultiplier();
-
         for (JokerCard joker : this.jokers) {
             joker.onPreHandScore(this);
         }
@@ -165,11 +140,7 @@ public class GameModel {
     }
 
     public long getTargetScore() {
-        return (long) (Constant.SCORE_ARRAY[this.ante.get()] * getBlindType().getMultiplier());
-    }
-
-    public BlindType getBlindType() {
-        return BlindType.values()[(this.round.get() - 1) % 3];
+        return (long) (Constant.SCORE_ARRAY[this.ante.get()] * this.blindType.get().getMultiplier());
     }
 
     public Stack<PlayingCard> getRoundDeck() {
@@ -240,10 +211,6 @@ public class GameModel {
         this.rerollCost.set(this.rerollCost.get() + REROLL_COST_STEP);
     }
 
-//    public List<PlayingCard> getGameDeck() {
-//        return this.gameDeck;
-//    }
-
     public List<JokerCard> getJokers() {
         return this.jokers;
     }
@@ -254,7 +221,11 @@ public class GameModel {
 
     public void setSortMode(SortMode sortMode) {
         this.sortMode = sortMode;
-        sortCards(); // TODO -> bind with object property
+        sortCards();
+    }
+
+    public ObjectProperty<BlindType> getBlindType() {
+        return this.blindType;
     }
 
     public HandResult getResult() {

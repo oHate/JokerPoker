@@ -26,13 +26,9 @@ public class AnimationUtil {
 
         Rectangle diamond = new Rectangle(40, 40);
         diamond.setFill(Constant.BLUE);
-//        diamond.setStroke(Color.BLACK);
-//        diamond.setStrokeWidth(2);
         diamond.setRotate(45);
 
         Label label = new Label(text, Color.WHITE, Constant.BLUE.darker());
-//        text.setFont(Font.font(18));
-//        text.setFill(Color.BLACK);
 
         popup.getChildren().addAll(diamond, label);
         popup.setAlignment(Pos.CENTER);
@@ -46,15 +42,9 @@ public class AnimationUtil {
 
         overlay.getChildren().add(popup);
 
-        // Pop animation
         ScaleTransition scale = new ScaleTransition(Duration.millis(1000), popup);
-//        scale.setFromX(0);
-//        scale.setFromY(0);
         scale.setToX(1.5);
         scale.setToY(1.5);
-
-//        TranslateTransition moveUp = new TranslateTransition(Duration.millis(600), popup);
-//        moveUp.setByY(-40);
 
         FadeTransition fade = new FadeTransition(Duration.millis(250), popup);
         fade.setDelay(Duration.millis(750));
@@ -69,8 +59,8 @@ public class AnimationUtil {
 
     public static ParallelTransition buildWiggleAnimation(Node node) {
         Timeline wiggle = new Timeline(
-                new KeyFrame(Duration.ZERO,        new KeyValue(node.rotateProperty(), 0)),
-                new KeyFrame(Duration.millis(60),  new KeyValue(node.rotateProperty(), -8)),
+                new KeyFrame(Duration.ZERO, new KeyValue(node.rotateProperty(), 0)),
+                new KeyFrame(Duration.millis(60), new KeyValue(node.rotateProperty(), -8)),
                 new KeyFrame(Duration.millis(120), new KeyValue(node.rotateProperty(), 8)),
                 new KeyFrame(Duration.millis(180), new KeyValue(node.rotateProperty(), -6)),
                 new KeyFrame(Duration.millis(240), new KeyValue(node.rotateProperty(), 6)),
@@ -85,9 +75,7 @@ public class AnimationUtil {
         scale.setAutoReverse(true);
         scale.setCycleCount(2);
 
-        ParallelTransition both = new ParallelTransition(wiggle, scale);
-//        both.setDelay(delay);
-        return both;
+        return new ParallelTransition(wiggle, scale);
     }
 
 

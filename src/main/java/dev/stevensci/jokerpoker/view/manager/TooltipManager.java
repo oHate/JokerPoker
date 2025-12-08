@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 public class TooltipManager {
 
     private final Pane overlay;
-    private PixelatedContentBox tooltip;   // single shared tooltip
+    private PixelatedContentBox tooltip;
     private Node activeNode;
 
     public TooltipManager(Pane overlay) {
@@ -25,31 +25,16 @@ public class TooltipManager {
     }
 
     private void createTooltipShell() {
-        tooltip = new PixelatedContentBox(Color.WHITE);
-        tooltip.setPadding(new Insets(2, 6, 6, 2));
-        tooltip.getChildren().removeAll(tooltip.getShadowRectangles());
-        tooltip.getLayout().setAlignment(Pos.CENTER);
+        this.tooltip = new PixelatedContentBox(Color.WHITE);
+        this.tooltip.setPadding(new Insets(2, 6, 6, 2));
+        this.tooltip.getChildren().removeAll(tooltip.getShadowRectangles());
+        this.tooltip.getLayout().setAlignment(Pos.CENTER);
 
-        tooltip.setMouseTransparent(true);
-        tooltip.setVisible(false);
+        this.tooltip.setMouseTransparent(true);
+        this.tooltip.setVisible(false);
 
         overlay.getChildren().add(tooltip);
     }
-
-
-//    public void attach(Node node, JokerCard card) {
-//        node.setOnMouseEntered(e -> {
-//            showWithJokerLayout(node, card);
-//        });
-//        node.setOnMouseExited(e -> hideTooltip(node));
-//    }
-//
-//    public void attach(Node node, PlayingCard card) {
-//        node.setOnMouseEntered(e -> {
-//            showWithPlayingLayout(node, card);
-//        });
-//        node.setOnMouseExited(e -> hideTooltip(node));
-//    }
 
     public void attach(Node node, JokerCard card) {
         node.setOnMouseEntered(e -> showTooltip(node, card));
@@ -57,7 +42,7 @@ public class TooltipManager {
     }
 
     private void showTooltip(Node node, JokerCard card) {
-        activeNode = node;
+        this.activeNode = node;
 
         PixelatedContentBox descriptionBox = new PixelatedContentBox(Color.WHITE);
         descriptionBox.setMinSize(100, 50);
@@ -81,9 +66,9 @@ public class TooltipManager {
                 )
         );
 
-        tooltip.getLayout().getChildren().setAll(content);
-        tooltip.autosize();
-        tooltip.setVisible(true);
+        this.tooltip.getLayout().getChildren().setAll(content);
+        this.tooltip.autosize();
+        this.tooltip.setVisible(true);
 
         updateTooltipPosition();
 
@@ -92,24 +77,24 @@ public class TooltipManager {
     }
 
     public void hideTooltip(Node node) {
-        if (node == activeNode) {
-            tooltip.setVisible(false);
-            activeNode = null;
+        if (node == this.activeNode) {
+            this.tooltip.setVisible(false);
+            this.activeNode = null;
         }
     }
 
     private void updateTooltipPosition() {
-        if (tooltip == null || activeNode == null || overlay.getScene() == null) {
+        if (this.tooltip == null || this.activeNode == null || this.overlay.getScene() == null) {
             return;
         }
 
-        Bounds bounds = activeNode.localToScene(activeNode.getBoundsInLocal());
+        Bounds bounds = this.activeNode.localToScene(this.activeNode.getBoundsInLocal());
 
         double nodeCenterX = bounds.getMinX() + bounds.getWidth() / 2.0;
-        double tooltipX = nodeCenterX - tooltip.getWidth() / 2.0;
+        double tooltipX = nodeCenterX - this.tooltip.getWidth() / 2.0;
         double tooltipY = bounds.getMaxY() + 5;
 
-        tooltip.relocate(tooltipX, tooltipY);
+        this.tooltip.relocate(tooltipX, tooltipY);
     }
 
 }

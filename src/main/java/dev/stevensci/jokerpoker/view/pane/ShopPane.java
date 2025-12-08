@@ -37,7 +37,7 @@ public class ShopPane extends SlidingPane {
         this.nextRoundButton.setPrefHeight(75);
 
         this.rerollButton = new PixelatedButton(
-                new Label("Reroll $5", Color.WHITE, Constant.GREEN.darker()),
+                new Label("Reroll $3", Color.WHITE, Constant.GREEN.darker()),
                 Constant.GREEN
         );
         this.rerollButton.setPrefHeight(75);

@@ -81,12 +81,10 @@ public enum JokerType {
         return this.supplier;
     }
 
-    // TODO
     public int getSpriteRow() {
         return ordinal() / 5;
     }
 
-    // TODO
     public int getSpriteColumn() {
         return ordinal() % 5;
     }
