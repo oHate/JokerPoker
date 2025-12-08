@@ -14,12 +14,9 @@ public class Constant {
 
     public static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
-    public static final ColumnConstraints COL_100 = createColumnConstraints(100);
     public static final ColumnConstraints COL_50 = createColumnConstraints(50);
     public static final ColumnConstraints COL_45 = createColumnConstraints(45);
     public static final ColumnConstraints COL_10 = createColumnConstraints(10);
-    public static final ColumnConstraints COL_70 = createColumnConstraints(70);
-    public static final ColumnConstraints COL_30 = createColumnConstraints(30);
 
     public static final int SPACING = 4;
     public static final int PADDING = 8;
@@ -28,6 +25,7 @@ public class Constant {
     public static final Image BACKGROUND_IMAGE;
     public static final SpriteSheet CARD_SPRITESHEET;
     public static final SpriteSheet JOKERS_SPRITESHEET;
+    public static final Font FONT_64;
     public static final Font FONT_32;
     public static final Font FONT_24;
 
@@ -48,6 +46,7 @@ public class Constant {
 
         BACKGROUND_IMAGE = new Image(Constant.class.getResourceAsStream("/images/pokertable.jpg"));
 
+        FONT_64 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 64);
         FONT_32 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 32);
         FONT_24 = Font.loadFont(Constant.class.getResourceAsStream("/fonts/m6x11.ttf"), 24);
     }
@@ -74,7 +73,7 @@ public class Constant {
 
     public static final long[] SCORE_ARRAY = {
             100,
-            1, // 300
+            300,
             800,
             2_000,
             5_000,

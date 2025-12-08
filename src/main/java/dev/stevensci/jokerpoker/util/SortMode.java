@@ -1,7 +1,7 @@
 package dev.stevensci.jokerpoker.util;
 
 import dev.stevensci.jokerpoker.card.PlayingCard;
-import dev.stevensci.jokerpoker.card.meta.CardRank;
+import dev.stevensci.jokerpoker.card.CardRank;
 
 import java.util.Comparator;
 

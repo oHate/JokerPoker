@@ -1,19 +1,19 @@
 package dev.stevensci.jokerpoker.card.joker.common;
 
-import dev.stevensci.jokerpoker.blind.Blind;
 import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.card.joker.JokerType;
+import dev.stevensci.jokerpoker.model.GameModel;
 
 public class ZanyJoker extends JokerCard {
 
     public ZanyJoker() {
-        super(JokerType.ZANY);
+        super(JokerType.ZANY_JOKER);
     }
 
     @Override
-    public void onPostHandScore(Blind blind) {
-        if (blind.getResult().getHandType().isThreeOfAKind()) {
-            blind.addHandMultiplier(12);
+    public void onPostHandScore(GameModel game) {
+        if (game.getResult().getHandType().isThreeOfAKind()) {
+            game.addResultMultiplier(12);
         }
     }
 

@@ -4,16 +4,16 @@ import dev.stevensci.jokerpoker.card.joker.JokerCard;
 import dev.stevensci.jokerpoker.card.joker.JokerType;
 import dev.stevensci.jokerpoker.model.GameModel;
 
-public class CraftyJoker extends JokerCard {
+public class HalfJoker extends JokerCard {
 
-    public CraftyJoker() {
-        super(JokerType.CRAFTY_JOKER);
+    public HalfJoker() {
+        super(JokerType.HALF_JOKER);
     }
 
     @Override
     public void onPostHandScore(GameModel game) {
-        if (game.getResult().getHandType().isFlush()) {
-            game.addResultChips(80);
+        if (game.getSelectedCards().size() <= 3) {
+            game.addResultMultiplier(20);
         }
     }
 
