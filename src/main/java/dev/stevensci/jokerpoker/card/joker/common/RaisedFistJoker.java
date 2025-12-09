@@ -17,8 +17,10 @@ public class RaisedFistJoker extends JokerCard {
 
     @Override
     public void onPostHandScore(GameModel game) {
-        List<PlayingCard> cards = new ArrayList<>(game.getCardsInHand()); // TODO -> filter out selected cards first
+        List<PlayingCard> cards = new ArrayList<>(game.getCardsInHand());
+        cards.removeAll(game.getSelectedCards());
         cards.sort(SortMode.RANK.getComparator());
+
         game.addResultMultiplier(cards.getLast().getRank().getChips() * 2);
     }
 
