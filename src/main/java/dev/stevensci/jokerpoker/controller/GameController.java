@@ -324,6 +324,7 @@ public class GameController {
                 this.model.incrementAnte();
             }
 
+            this.model.getCash().set(0);
             this.model.getRound().set(1);
             this.model.getAnte().set(1);
             this.view.getGamePane().getCardArea().getChildren().clear();

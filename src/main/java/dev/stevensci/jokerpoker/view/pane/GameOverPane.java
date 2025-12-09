@@ -1,11 +1,10 @@
 package dev.stevensci.jokerpoker.view.pane;
 
+import dev.stevensci.jokerpoker.util.Constant;
 import dev.stevensci.jokerpoker.view.elements.Label;
 import dev.stevensci.jokerpoker.view.elements.PixelatedButton;
 import dev.stevensci.jokerpoker.view.elements.PixelatedContentBox;
-import dev.stevensci.jokerpoker.util.Constant;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 public class GameOverPane extends SlidingPane {
