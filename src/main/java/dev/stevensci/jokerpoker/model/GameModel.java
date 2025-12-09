@@ -69,6 +69,7 @@ public class GameModel {
         this.score.set(0);
         this.hands.set(this.handsAmount);
         this.discards.set(this.discardsAmount);
+        this.rerollCost.set(DEFAULT_REROLL_COST);
 
         this.roundDeck.clear();
         this.selectedCards.clear();

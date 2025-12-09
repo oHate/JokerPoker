@@ -16,6 +16,7 @@ import dev.stevensci.jokerpoker.view.node.CardNode;
 import dev.stevensci.jokerpoker.view.node.JokerCardNode;
 import dev.stevensci.jokerpoker.view.node.PlayingCardNode;
 import dev.stevensci.jokerpoker.view.pane.ContinuePane;
+import dev.stevensci.jokerpoker.view.pane.GameOverPane;
 import dev.stevensci.jokerpoker.view.pane.GamePane;
 import dev.stevensci.jokerpoker.view.pane.ShopPane;
 import javafx.animation.ParallelTransition;
@@ -28,9 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -92,6 +91,9 @@ public class GameController {
         setupNextRoundButton();
         setupContinueButton();
         setupRerollButton();
+
+        setupRestartButton();
+        setupExitButton();
 
         this.model.initialize();
         drawCardsToHand();
@@ -225,7 +227,6 @@ public class GameController {
                 this.model.incrementAnte();
             }
 
-            this.model.getRerollCost().set(GameModel.DEFAULT_REROLL_COST);
             this.model.incrementRound();
             this.view.getGamePane().getCardArea().getChildren().clear();
 
@@ -254,13 +255,16 @@ public class GameController {
         shopPane.getJokerArea().getChildren().clear();
 
         List<JokerCard> jokerCards = new ArrayList<>();
+        Set<JokerType> used = new HashSet<>();
 
-        for (int i = 0; i < 4; i++) {
-            JokerCard card = JokerType.values()[(int) (Math.random() * JokerType.values().length)]
-                    .getSupplier()
-                    .get();
+        JokerType[] types = JokerType.values();
 
-            jokerCards.add(card);
+        while (jokerCards.size() < 4) {
+            JokerType type = types[(int)(Math.random() * types.length)];
+
+            if (used.add(type)) {
+                jokerCards.add(type.getSupplier().get());
+            }
         }
 
         for (CardNode<JokerCard> node : shopPane.addCards(jokerCards)) {
@@ -308,6 +312,31 @@ public class GameController {
 
             setupShopJokers();
         });
+    }
+
+    private void setupRestartButton() {
+        GameOverPane gameOverPane = this.view.getGameOverPane();
+
+        gameOverPane.getRestartButton().setOnMouseClicked(_ -> {
+            gameOverPane.getHideTransition().play();
+
+            if (this.model.getBlindType().get() == BlindType.BOSS) {
+                this.model.incrementAnte();
+            }
+
+            this.model.getRound().set(1);
+            this.model.getAnte().set(1);
+            this.view.getGamePane().getCardArea().getChildren().clear();
+
+            this.model.initialize();
+            drawCardsToHand();
+
+            this.view.unlockMouseClicks();
+        });
+    }
+
+    private void setupExitButton() {
+        this.view.getGameOverPane().getExitButton().setOnMouseClicked(_ -> System.exit(0));
     }
 
     public void discard() {

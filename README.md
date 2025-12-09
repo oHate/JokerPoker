@@ -66,9 +66,11 @@ java -jar JokerPoker-1.0-SNAPSHOT.jar
 
 ---
 
-## Art Credits
+## Asset Credits
 
-Cards -  (@GreenNinja2525, @MeirGavish, @MathisMartin31)
+- Poker Table - www.freepik.com
+- Font (m6x11) - Daniel Linssen
+- Cards - (@GreenNinja2525, @MeirGavish, @MathisMartin31)
 
 ### Jokers
 1. Joker - (@GreenNinja2525)
